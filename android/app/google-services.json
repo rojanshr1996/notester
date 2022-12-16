@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "309719741864",
+    "project_id": "notester-3be13",
+    "storage_bucket": "notester-3be13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309719741864:android:8253ace7ecb7c9425d999d",
+        "android_client_info": {
+          "package_name": "com.rojanshr.notester"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309719741864-1fc38jhel7j5hromvr5l4979ffer8t9b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rojanshr.notester",
+            "certificate_hash": "e07d2af3885d598d2a6a6a2bdf5ecb1e876da459"
+          }
+        },
+        {
+          "client_id": "309719741864-5k46vr4tt4h52n56ts5v321aqie34atb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rojanshr.notester",
+            "certificate_hash": "21f48892fb23ee3f6759a9252555d40d36305e5a"
+          }
+        },
+        {
+          "client_id": "309719741864-vpd238mks2j2daukgkf4bf4muqhbd1o2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDV58L30H0_HyfCm-oKZ4_wxoRmK2wyc-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "309719741864-vpd238mks2j2daukgkf4bf4muqhbd1o2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "309719741864-vfi39250u7vjicnq2mqfvkfttr4clhhp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rojanshr.notester"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

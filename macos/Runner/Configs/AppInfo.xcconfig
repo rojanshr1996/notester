@@ -8,7 +8,7 @@
 PRODUCT_NAME = notester
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.notester
+PRODUCT_BUNDLE_IDENTIFIER = com.rojanshr.notester
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2022 com.example. All rights reserved.
