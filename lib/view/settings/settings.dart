@@ -5,6 +5,7 @@ import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
+import 'package:notester/utils/constants.dart';
 import 'package:notester/utils/dialogs/logout_dialog.dart';
 import 'package:notester/view/auth/login_screen.dart';
 import 'package:notester/view/route/routes.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -114,6 +116,42 @@ class _SettingsState extends State<Settings> {
                                 color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
                             child: ListTile(
                               leading: Icon(
+                                Icons.privacy_tip_outlined,
+                                color: Theme.of(context).iconTheme.color,
+                              ),
+                              onTap: () {
+                                openPrivacyPolicy(url: privacyPolicyUrl);
+                              },
+                              title: Text(
+                                "Privacy Policy",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.file_copy_outlined,
+                                color: Theme.of(context).iconTheme.color,
+                              ),
+                              onTap: () {
+                                openPrivacyPolicy(url: termsUrl);
+                              },
+                              title: Text(
+                                "Terms and Condition",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                            child: ListTile(
+                              leading: Icon(
                                 Icons.logout,
                                 color: Theme.of(context).iconTheme.color,
                               ),
@@ -124,6 +162,7 @@ class _SettingsState extends State<Settings> {
                                   final sharedPreferences = await SharedPreferences.getInstance();
                                   sharedPreferences.setBool("notificationSent", false);
                                   FirebaseMessaging.instance.unsubscribeFromTopic("Reminders");
+                                  if (!mounted) return;
                                   BlocProvider.of<AuthBloc>(context).add(const AuthEventLogout());
                                 }
                               },
@@ -151,7 +190,7 @@ class _SettingsState extends State<Settings> {
                         child: LogoWidget(height: 24),
                       ),
                       title: Text(
-                        "NOTESTER",
+                        appName.toUpperCase(),
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).hintColor),
                       ),
                       subtitle: Text(
@@ -167,5 +206,11 @@ class _SettingsState extends State<Settings> {
         },
       ),
     );
+  }
+
+  Future<void> openPrivacyPolicy({required String url}) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      throw 'Could not launch $url';
+    }
   }
 }
