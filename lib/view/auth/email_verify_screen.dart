@@ -15,7 +15,6 @@ class EmailVerifyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    devtools.log("${FirebaseAuth.instance.currentUser}");
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -30,8 +29,6 @@ class EmailVerifyScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          // debugPrint("$state");
-
           return SizedBox(
             width: Utilities.screenWidth(context),
             height: Utilities.screenHeight(context),

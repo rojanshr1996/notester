@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -66,7 +65,6 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   void _titleControllerListener() async {
     final note = _note;
-    debugPrint("$_note");
     if (note == null) {
       return;
     }
@@ -743,7 +741,6 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                 child: ColorSlider(
                                   noteColor: _color.value,
                                   callBackColorTapped: (color) {
-                                    log("SELECTED COLOR: $color");
                                     _color.value = color;
                                     _saveNoteIfTextNotEmpty();
                                   },
@@ -775,7 +772,6 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     if (_task.value == null) return;
     final snapshot = await _task.value!.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
-    log("Donwload-link image: $urlDownload");
     _imageUrl.value = urlDownload;
     _saveNoteIfTextNotEmpty();
   }
@@ -788,7 +784,6 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     if (_taskFile.value == null) return;
     final snapshot = await _taskFile.value!.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
-    log("Donwload-link file: $urlDownload");
     _fileUrl.value = urlDownload;
     _fileName.value = _file.value!.path.split("/").last;
     _saveNoteIfTextNotEmpty();
@@ -800,7 +795,6 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
           if (snapshot.hasData) {
             final snap = snapshot.data!;
             final progress = snap.bytesTransferred / snap.totalBytes;
-            log("PROGRESS: $progress");
             return progress == 1.0
                 ? const SizedBox()
                 : Container(
@@ -825,7 +819,6 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
           if (snapshot.hasData) {
             final snap = snapshot.data!;
             final progress = snap.bytesTransferred / snap.totalBytes;
-            log("PROGRESS: $progress");
             return progress == 1.0
                 ? const SizedBox()
                 : Container(

@@ -55,7 +55,7 @@ class _NotesListViewState extends State<NotesListView> {
               if (note.reminder != null) {
                 if (note.reminder != "") {
                   if (!_notSent) {
-                    if (DateTime.now().isAfter(DateTime.now().subtract(const Duration(minutes: 5))) &&
+                    if (DateTime.now().isAfter(DateTime.parse(note.reminder!).subtract(const Duration(minutes: 15))) &&
                         DateTime.now().isBefore(DateTime.parse(note.reminder!))) {
                       fcmServices.sendPushMessage(
                           messageBody: note.title == "" && note.text == ""

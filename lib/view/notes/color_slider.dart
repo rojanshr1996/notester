@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:notester/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -89,7 +87,6 @@ class ColorSliderState extends State<ColorSlider> {
   }
 
   Widget? _checkOrNot(int index) {
-    log("Check: $indexOfCurrentColor");
     if (indexOfCurrentColor == index) {
       return Container(
         decoration:

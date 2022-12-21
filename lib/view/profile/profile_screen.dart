@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -55,7 +54,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       addressController = TextEditingController(text: widget.profileData?.address);
       _imageUrl.value = widget.profileData!.profileImage!;
     }
-    log("THIS DATA: ${widget.profileData.toString()}");
   }
 
   @override
@@ -111,7 +109,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (_task.value == null) return;
     final snapshot = await _task.value!.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
-    log("Donwload-link image: $urlDownload");
     _imageUrl.value = urlDownload;
     _updateUser();
   }
@@ -154,7 +151,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       formKey: formKey,
                                       onUpdate: () {
                                         FocusScope.of(context).unfocus();
-                                        log("${nameController.text}, ${phoneController.text}, ${addressController.text}");
                                         Utilities.closeActivity(context);
                                         _updateUser();
                                       },
@@ -331,7 +327,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (snapshot.hasData) {
             final snap = snapshot.data!;
             progress = snap.bytesTransferred / snap.totalBytes;
-            log("PROGRESS: $progress ---> ${snap.totalBytes}");
             return progress == 1.0
                 ? const SizedBox()
                 : Container(

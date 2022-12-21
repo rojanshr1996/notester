@@ -84,8 +84,6 @@ class _IndexScreenState extends State<IndexScreen> {
             }
           },
           builder: (context, state) {
-            // debugPrint("$state");
-
             return Consumer<DarkThemeProvider>(
               builder: (context, value, child) {
                 return SizedBox(

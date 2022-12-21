@@ -9,8 +9,6 @@ class PostService {
   final String _baseurl = "https://jsonplaceholder.typicode.com";
 
   getPosts() async {
-    debugPrint("THIS IS THE API: $_baseurl/posts/");
-
     try {
       final response = await http.get(Uri.parse("$_baseurl/posts"));
       // Use the compute function to run parsePhotos in a separate isolate.
@@ -26,8 +24,6 @@ class PhotoService {
   static const _baseurl = "https://jsonplaceholder.typicode.com";
 
   Future<List<Photo>> fetchPhotos(http.Client client) async {
-    debugPrint("THIS IS THE API: $_baseurl");
-
     try {
       final response = await client.get(Uri.parse("$_baseurl/photos"));
       // Use the compute function to run parsePhotos in a separate isolate.

@@ -8,8 +8,6 @@ import 'package:notester/view/index_screen.dart';
 import 'package:notester/view/notes/create_update_notes_view.dart';
 import 'package:notester/view/notes/notes_screen.dart';
 import 'package:notester/view/notes/pdf_viewer_screen.dart';
-import 'package:notester/view/posts/post_detail_screen.dart';
-import 'package:notester/view/posts/posts_bloc_screen.dart';
 import 'package:notester/view/profile/profile_screen.dart';
 
 import 'package:notester/view/route/routes.dart';
@@ -31,9 +29,6 @@ class AppRouter {
 
       case Routes.register:
         return MaterialPageRoute(builder: (_) => const SingupScreen());
-
-      case Routes.post:
-        return MaterialPageRoute(builder: (_) => const PostsBlocScreen(title: "Flutter Bloc"));
 
       case Routes.notes:
         return MaterialPageRoute(builder: (_) => const NotesScreen());
@@ -59,12 +54,6 @@ class AppRouter {
       //   } else {
       //     return MaterialPageRoute(builder: (_) => const CreateUpdateNotesScreen());
       //   }
-
-      case Routes.postDetail:
-        if (args is Posts) {
-          return MaterialPageRoute(builder: (_) => PostDetailScreen(post: args));
-        }
-        return errorRoute(settings);
 
       case Routes.pdfView:
         if (args is Args) {

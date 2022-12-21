@@ -88,7 +88,6 @@
 
 //       final db = await openDatabase(dbPath);
 //       _db = db;
-//       debugPrint("$_db");
 //       // Create user table
 //       await db.execute(createUserTable);
 //       // Create note table

@@ -96,7 +96,6 @@ class LoginScreenState extends State<LoginScreen> {
                     } else if (state.exception is WrongPasswordAuthException) {
                       await showErrorDialog(context, "Wrong credentials");
                     } else if (state.exception is GenericAuthException) {
-                      log("EXCEPTION ERROR: ${state.exception}");
                       await showErrorDialog(context, "Authentication Error");
                     }
                   }

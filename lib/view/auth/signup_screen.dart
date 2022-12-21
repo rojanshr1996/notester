@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
@@ -63,8 +61,6 @@ class _SingupScreenState extends State<SingupScreen> {
           backgroundColor: Theme.of(context).primaryColor,
           body: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) async {
-              log("THIS IS THE STATE RIGHT NOW: -> $state ==> ${state.isLoading}");
-
               if (state.isLoading) {
                 LoadingScreen().show(context: context, text: state.loadingText ?? "Please wait a moment");
               } else {

@@ -142,7 +142,6 @@ class _NotesScreenState extends State<NotesScreen> {
                                             icon: const Icon(Icons.filter_list_rounded),
                                             tooltip: "Filter list",
                                             onSelected: (String value) {
-                                              log("Value: $value");
                                               _filterValue.value = value;
                                             },
                                             itemBuilder: (context) => [

@@ -27,7 +27,6 @@ class FcmServices {
   Future<String?> getToken() async {
     final sharedPreferences = await SharedPreferences.getInstance();
     final fcmToken = await FirebaseMessaging.instance.getToken();
-    log("FCM: $fcmToken");
     if (fcmToken != null) {
       sharedPreferences.setString("fcmToken", fcmToken);
     }
@@ -122,8 +121,6 @@ class FcmServices {
         'data': <String, dynamic>{'click_action': 'FLUTTER_NOTIFICATION_CLICK', 'id': '1', 'status': 'done'},
         "to": "$token",
       };
-
-      log("MessageBody: $body");
       final response = await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
@@ -133,15 +130,11 @@ class FcmServices {
         },
         body: jsonEncode(body),
       );
-
-      log("${response.statusCode}");
-
       if (response.statusCode == 200) {
-        log("Success");
         sharedPreferences.setBool("notificationSent", true);
       }
     } catch (e) {
-      log("error push notification");
+      rethrow;
     }
   }
 }

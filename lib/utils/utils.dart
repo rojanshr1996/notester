@@ -46,7 +46,6 @@ class Utils {
   }
 
   static Map<String, dynamic> parseJwt(String token) {
-    debugPrint("THIS IS TOKEN: $token");
     final parts = token.split('.');
     if (parts.length != 3) {
       throw Exception('invalid token');
@@ -104,10 +103,9 @@ class Utils {
   }
 
   static Future<File?> addImage(BuildContext context) async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? result = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+    final ImagePicker picker = ImagePicker();
+    final XFile? result = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (result != null) {
-      log("FILE size: ${(await result.length()) / (1024 * 1024)} MB");
       File? file = File(result.path);
       return file;
     } else {

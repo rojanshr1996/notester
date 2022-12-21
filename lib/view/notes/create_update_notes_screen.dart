@@ -68,7 +68,6 @@ class _CreateUpdateNotesScreenState extends State<CreateUpdateNotesScreen> {
 
   void _titleControllerListener() async {
     final note = _note;
-    debugPrint("$_note");
     if (note == null) {
       return;
     }
@@ -90,7 +89,6 @@ class _CreateUpdateNotesScreenState extends State<CreateUpdateNotesScreen> {
   void _textControllerListener() async {
     log(_textController.text);
     final note = _note;
-    debugPrint("$_note");
     if (note == null) {
       return;
     }
@@ -750,7 +748,6 @@ class _CreateUpdateNotesScreenState extends State<CreateUpdateNotesScreen> {
                                   child: ColorSlider(
                                     noteColor: _color.value,
                                     callBackColorTapped: (color) {
-                                      log("SELECTED COLOR: $color");
                                       _color.value = color;
                                       _saveNoteIfTextNotEmpty();
                                     },
@@ -782,7 +779,6 @@ class _CreateUpdateNotesScreenState extends State<CreateUpdateNotesScreen> {
     if (_task.value == null) return;
     final snapshot = await _task.value!.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
-    log("Donwload-link image: $urlDownload");
     _imageUrl.value = urlDownload;
     _saveNoteIfTextNotEmpty();
   }
@@ -795,7 +791,6 @@ class _CreateUpdateNotesScreenState extends State<CreateUpdateNotesScreen> {
     if (_taskFile.value == null) return;
     final snapshot = await _taskFile.value!.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
-    log("Donwload-link file: $urlDownload");
     _fileUrl.value = urlDownload;
     _fileName.value = _file.value!.path.split("/").last;
     _saveNoteIfTextNotEmpty();
@@ -807,7 +802,6 @@ class _CreateUpdateNotesScreenState extends State<CreateUpdateNotesScreen> {
           if (snapshot.hasData) {
             final snap = snapshot.data!;
             final progress = snap.bytesTransferred / snap.totalBytes;
-            log("PROGRESS: $progress");
             return progress == 1.0
                 ? const SizedBox()
                 : Container(
@@ -832,7 +826,6 @@ class _CreateUpdateNotesScreenState extends State<CreateUpdateNotesScreen> {
           if (snapshot.hasData) {
             final snap = snapshot.data!;
             final progress = snap.bytesTransferred / snap.totalBytes;
-            log("PROGRESS: $progress");
             return progress == 1.0
                 ? const SizedBox()
                 : Container(
@@ -876,7 +869,6 @@ class _CreateUpdateNotesScreenState extends State<CreateUpdateNotesScreen> {
 
 //   void _textControllerListener() async {
 //     final note = _note;
-//     debugPrint("$_note");
 //     if (note == null) {
 //       return;
 //     }

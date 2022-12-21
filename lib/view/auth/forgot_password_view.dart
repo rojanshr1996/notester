@@ -59,8 +59,6 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 }
                 if (state is AuthStateForgotPassword) {
                   if (state.hasSentEmail) {
-                    // debugPrint("THIS IS EMAIL SENT: ${state.hasSentEmail}");
-
                     showPasswordResetDialog(context).then((value) {
                       _emailController.clear();
                       Utilities.removeNamedStackActivity(context, Routes.login);

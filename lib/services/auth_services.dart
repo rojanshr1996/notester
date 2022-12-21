@@ -156,7 +156,6 @@ class AuthServices {
           GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
       final signInData = await _firebaseAuth.signInWithCredential(credential);
-      log("SIGN IN DATA: $signInData");
       final user = currentUser;
       if (signInData.additionalUserInfo != null) {
         if (signInData.additionalUserInfo!.isNewUser) {
@@ -170,7 +169,6 @@ class AuthServices {
         throw UserNotLoggedInAuthException();
       }
     } catch (e) {
-      log("EXCEPTION: $e");
       throw GenericAuthException();
     }
   }

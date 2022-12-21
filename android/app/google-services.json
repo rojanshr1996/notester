@@ -14,19 +14,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "309719741864-1fc38jhel7j5hromvr5l4979ffer8t9b.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rojanshr.notester",
-            "certificate_hash": "e07d2af3885d598d2a6a6a2bdf5ecb1e876da459"
-          }
-        },
-        {
           "client_id": "309719741864-5k46vr4tt4h52n56ts5v321aqie34atb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.rojanshr.notester",
             "certificate_hash": "21f48892fb23ee3f6759a9252555d40d36305e5a"
+          }
+        },
+        {
+          "client_id": "309719741864-ch2vun2bthddmp55cm0va062c0q6vvac.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rojanshr.notester",
+            "certificate_hash": "49ffbd6af1ed5569817bef29a5b3b0266cf6d6ff"
+          }
+        },
+        {
+          "client_id": "309719741864-spv0et76nm7sepid5n5u4lg0rn7c4qgj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rojanshr.notester",
+            "certificate_hash": "d302b7f33a8943ca9fe29c29506083fc9c41bbab"
           }
         },
         {
