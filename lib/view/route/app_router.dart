@@ -1,5 +1,6 @@
 import 'package:notester/model/model.dart';
 import 'package:notester/services/cloud/cloud_note.dart';
+import 'package:notester/splash_screen.dart';
 import 'package:notester/view/auth/forgot_password_view.dart';
 import 'package:notester/view/auth/login_screen.dart';
 import 'package:notester/view/auth/signup_screen.dart';
@@ -21,6 +22,9 @@ class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
+      case Routes.splash:
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
+
       case Routes.login:
         return MaterialPageRoute(builder: (_) => LoginScreen(message: (args is String ? args : "")));
 

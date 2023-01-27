@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "309719741864-4l67f88e1fdliekirj1n8kk6a7us3bgl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rojanshr.notester",
+            "certificate_hash": "3048cf313a564fc1e831028580cad162df65e252"
+          }
+        },
+        {
           "client_id": "309719741864-5k46vr4tt4h52n56ts5v321aqie34atb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

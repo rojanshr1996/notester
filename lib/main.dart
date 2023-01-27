@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
                 themeMode: value.darkTheme ? ThemeMode.dark : ThemeMode.light,
                 theme: value.darkTheme ? ThemeClass.darkTheme : ThemeClass.lightTheme,
                 darkTheme: value.darkTheme ? ThemeClass.darkTheme : ThemeClass.darkTheme,
-                initialRoute: Routes.login,
+                initialRoute: Routes.splash,
               );
             },
           ),
