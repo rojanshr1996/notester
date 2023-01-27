@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:notester/model/model.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
@@ -15,6 +16,7 @@ import 'package:notester/view/notes/notes_list_view.dart';
 import 'package:notester/view/route/routes.dart';
 import 'package:notester/widgets/default_loading_screen.dart';
 import 'package:notester/widgets/no_data_widget.dart';
+import 'package:notester/widgets/simple_circular_loader.dart';
 import 'package:notester/widgets/sliver_header_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -123,6 +125,59 @@ class _NotesScreenState extends State<NotesScreen> {
                                       imagePath:
                                           value.darkTheme ? "assets/notesImage.png" : "assets/notesImageLight.png"),
                                   expandedHeight: maxHeight - MediaQuery.of(context).padding.top,
+                                  leading: StreamBuilder(
+                                    stream: _notesService.userData(ownerUserId: userId!),
+                                    builder: (context, snapshot) {
+                                      switch (snapshot.connectionState) {
+                                        case ConnectionState.waiting:
+                                        case ConnectionState.active:
+                                          if (snapshot.hasData) {
+                                            final userData = snapshot.data as Iterable<UserModel>;
+                                            return userData.isEmpty
+                                                ? const SizedBox()
+                                                : Padding(
+                                                    padding: const EdgeInsets.all(8),
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        Utilities.openNamedActivity(context, Routes.settings);
+                                                      },
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                            border: Border.all(color: Theme.of(context).primaryColor),
+                                                            color: AppColors.cDarkBlueAccent,
+                                                            shape: BoxShape.circle),
+                                                        child: ClipRRect(
+                                                          borderRadius: BorderRadius.circular(100),
+                                                          child: CachedNetworkImage(
+                                                            memCacheHeight: 200,
+                                                            imageUrl: userData.first.profileImage ?? "",
+                                                            fit: BoxFit.cover,
+                                                            placeholder: (context, url) => Center(
+                                                                child: SimpleCircularLoader(
+                                                                    color: Theme.of(context).colorScheme.outline)),
+                                                            errorWidget: (context, url, error) => const Icon(
+                                                                Icons.image,
+                                                                color: AppColors.cLight,
+                                                                size: 36),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                          } else {
+                                            return const SizedBox(
+                                              height: 70,
+                                              width: 70,
+                                            );
+                                          }
+
+                                        default:
+                                          return const Center(
+                                            child: SimpleCircularLoader(),
+                                          );
+                                      }
+                                    },
+                                  ),
                                   actions: [
                                     IconButton(
                                       onPressed: () {
@@ -145,34 +200,35 @@ class _NotesScreenState extends State<NotesScreen> {
                                               _filterValue.value = value;
                                             },
                                             itemBuilder: (context) => [
-                                                  PopupMenuItem(
-                                                    value: "all",
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.list,
-                                                          color: Theme.of(context).colorScheme.primary,
-                                                        ),
-                                                        const SizedBox(width: 12),
-                                                        Text("Show All", style: Theme.of(context).textTheme.bodyLarge),
-                                                      ],
+                                              PopupMenuItem(
+                                                value: "all",
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.list,
+                                                      color: Theme.of(context).colorScheme.primary,
                                                     ),
-                                                  ),
-                                                  PopupMenuItem(
-                                                    value: "fav",
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.star,
-                                                          color: Theme.of(context).colorScheme.primary,
-                                                        ),
-                                                        const SizedBox(width: 12),
-                                                        Text("Only Favourites",
-                                                            style: Theme.of(context).textTheme.bodyLarge),
-                                                      ],
+                                                    const SizedBox(width: 12),
+                                                    Text("Show All", style: Theme.of(context).textTheme.bodyLarge),
+                                                  ],
+                                                ),
+                                              ),
+                                              PopupMenuItem(
+                                                value: "fav",
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.star,
+                                                      color: Theme.of(context).colorScheme.primary,
                                                     ),
-                                                  ),
-                                                ])
+                                                    const SizedBox(width: 12),
+                                                    Text("Only Favourites",
+                                                        style: Theme.of(context).textTheme.bodyLarge),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          )
                                   ],
                                 ),
                                 if (allNotes.isNotEmpty)

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
@@ -86,7 +84,8 @@ class LoginScreenState extends State<LoginScreen> {
 
                   if (state is AuthStateLoggedIn) {
                     // Navigating to the post screen if the user is authenticated
-                    Utilities.removeNamedStackActivity(context, Routes.index);
+                    Utilities.removeNamedStackActivity(context, Routes.notes);
+                    // Utilities.removeNamedStackActivity(context, Routes.index);
                   } else if (state is AuthStateNeedsVerification) {
                     Utilities.replaceNamedActivity(context, Routes.verifyEmail);
                   }

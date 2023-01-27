@@ -4,15 +4,22 @@ import 'package:custom_widgets/custom_widgets.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
+import 'package:notester/model/model.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
+import 'package:notester/services/auth_services.dart';
+import 'package:notester/services/cloud/cloud_note.dart';
+import 'package:notester/services/cloud/firebase_cloud_storage.dart';
 import 'package:notester/utils/constants.dart';
 import 'package:notester/utils/dialogs/logout_dialog.dart';
 import 'package:notester/view/auth/login_screen.dart';
 import 'package:notester/view/route/routes.dart';
+import 'package:notester/widgets/about_text_dialog.dart';
 import 'package:notester/widgets/logo_widget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notester/widgets/settings_user_header.dart';
+import 'package:notester/widgets/simple_circular_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,6 +33,9 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   bool _light = false;
+  late final FirebaseCloudStorage _notesService;
+  final AuthServices _auth = AuthServices();
+  String? get userId => _auth.currentUser == null ? "" : _auth.currentUser!.id;
 
   onToggleDarkMode(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context, listen: false);
@@ -35,6 +45,12 @@ class _SettingsState extends State<Settings> {
     });
 
     themeChange.darkTheme = _light;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _notesService = FirebaseCloudStorage();
   }
 
   @override
@@ -68,6 +84,46 @@ class _SettingsState extends State<Settings> {
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
                         children: [
+                          StreamBuilder(
+                            stream: _notesService.userData(ownerUserId: userId!),
+                            builder: (context, snapshot) {
+                              switch (snapshot.connectionState) {
+                                case ConnectionState.waiting:
+                                case ConnectionState.active:
+                                  if (snapshot.hasData) {
+                                    final userData = snapshot.data as Iterable<UserModel>;
+                                    return userData.isEmpty
+                                        ? const SizedBox()
+                                        : SettingsUserHeader(
+                                            userName: "${userData.first.name}",
+                                            profilePic: userData.first.profileImage ?? "",
+                                            onImageTap: () {
+                                              Utilities.openNamedActivity(context, Routes.enlargeImage,
+                                                  arguments: ImageArgs(imageUrl: userData.first.profileImage ?? ""));
+                                            },
+                                            onPressed: () {
+                                              Utilities.openNamedActivity(context, Routes.profile,
+                                                  arguments: userData.first);
+                                            },
+                                            onSettingsTap: () {
+                                              Utilities.openNamedActivity(context, Routes.settings);
+                                            },
+                                          );
+                                  } else {
+                                    return const SizedBox(
+                                      height: 70,
+                                      width: 70,
+                                    );
+                                  }
+
+                                default:
+                                  return const Center(
+                                    child: SimpleCircularLoader(),
+                                  );
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
                                 color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
@@ -90,6 +146,29 @@ class _SettingsState extends State<Settings> {
                                     },
                                     activeColor: Theme.of(context).colorScheme.background,
                                   )),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.info_outline,
+                                color: Theme.of(context).iconTheme.color,
+                              ),
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) {
+                                    return const AboutTextDialog();
+                                  },
+                                );
+                              },
+                              title: Text(
+                                "About",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -194,7 +273,7 @@ class _SettingsState extends State<Settings> {
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).hintColor),
                       ),
                       subtitle: Text(
-                        "Version 1.0.0",
+                        "Version 1.0.1",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                       ),
                     ),

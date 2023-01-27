@@ -69,10 +69,10 @@ class SettingsUserHeader extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: onSettingsTap,
-                icon: const Icon(Icons.settings),
-              ),
+              // IconButton(
+              //   onPressed: onSettingsTap,
+              //   icon: const Icon(Icons.settings),
+              // ),
             ],
           ),
         ),

@@ -429,7 +429,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                               decoration: InputDecoration(
                                                 hintText: "Enter title... ",
                                                 hintStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                                    color: Theme.of(context).colorScheme.primary, fontWeight: medium),
+                                                    color: Theme.of(context).backgroundColor, fontWeight: medium),
                                                 border: const UnderlineInputBorder(borderSide: BorderSide.none),
                                               ),
                                             ),
@@ -463,8 +463,10 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                         maxLines: null,
                                         decoration: InputDecoration(
                                           hintText: "Enter new note... ",
-                                          hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                              color: Theme.of(context).colorScheme.primary, fontWeight: regular),
+                                          hintStyle: Theme.of(context)
+                                              .textTheme
+                                              .labelLarge
+                                              ?.copyWith(color: Theme.of(context).backgroundColor, fontWeight: regular),
                                           border: const UnderlineInputBorder(borderSide: BorderSide.none),
                                         ),
                                       ),
