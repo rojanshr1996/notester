@@ -1,4 +1,4 @@
-package com.rojanshr.notester
+package com.rojanshr.notesterdev
 
 import io.flutter.embedding.android.FlutterActivity
 

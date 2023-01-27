@@ -1,73 +1,71 @@
 {
   "project_info": {
-    "project_number": "309719741864",
-    "project_id": "notester-3be13",
-    "storage_bucket": "notester-3be13.appspot.com"
+    "project_number": "914698463417",
+    "project_id": "notester-dev",
+    "storage_bucket": "notester-dev.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:309719741864:android:8253ace7ecb7c9425d999d",
+        "mobilesdk_app_id": "1:914698463417:android:8caa0bea5bf02c3a6a9368",
         "android_client_info": {
           "package_name": "com.rojanshr.notester"
         }
       },
       "oauth_client": [
         {
-          "client_id": "309719741864-4l67f88e1fdliekirj1n8kk6a7us3bgl.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rojanshr.notester",
-            "certificate_hash": "3048cf313a564fc1e831028580cad162df65e252"
-          }
-        },
-        {
-          "client_id": "309719741864-5k46vr4tt4h52n56ts5v321aqie34atb.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rojanshr.notester",
-            "certificate_hash": "21f48892fb23ee3f6759a9252555d40d36305e5a"
-          }
-        },
-        {
-          "client_id": "309719741864-ch2vun2bthddmp55cm0va062c0q6vvac.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rojanshr.notester",
-            "certificate_hash": "49ffbd6af1ed5569817bef29a5b3b0266cf6d6ff"
-          }
-        },
-        {
-          "client_id": "309719741864-spv0et76nm7sepid5n5u4lg0rn7c4qgj.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rojanshr.notester",
-            "certificate_hash": "d302b7f33a8943ca9fe29c29506083fc9c41bbab"
-          }
-        },
-        {
-          "client_id": "309719741864-vpd238mks2j2daukgkf4bf4muqhbd1o2.apps.googleusercontent.com",
+          "client_id": "914698463417-v5toqm3gd5bte6mqba2k0497049l8uip.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDV58L30H0_HyfCm-oKZ4_wxoRmK2wyc-E"
+          "current_key": "AIzaSyA3W4GTycJj7WUYmMWxYPQ9w2wAD0AgHXE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "309719741864-vpd238mks2j2daukgkf4bf4muqhbd1o2.apps.googleusercontent.com",
+              "client_id": "914698463417-v5toqm3gd5bte6mqba2k0497049l8uip.apps.googleusercontent.com",
               "client_type": 3
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:914698463417:android:3ef151f60ca7c6d46a9368",
+        "android_client_info": {
+          "package_name": "com.rojanshr.notesterdev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "914698463417-r4khs0ds1a2jpvgpd5dvsbvlo5o63g18.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rojanshr.notesterdev",
+            "certificate_hash": "3048cf313a564fc1e831028580cad162df65e252"
+          }
+        },
+        {
+          "client_id": "914698463417-v5toqm3gd5bte6mqba2k0497049l8uip.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3W4GTycJj7WUYmMWxYPQ9w2wAD0AgHXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
             {
-              "client_id": "309719741864-vfi39250u7vjicnq2mqfvkfttr4clhhp.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.rojanshr.notester"
-              }
+              "client_id": "914698463417-v5toqm3gd5bte6mqba2k0497049l8uip.apps.googleusercontent.com",
+              "client_type": 3
             }
           ]
         }
