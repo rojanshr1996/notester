@@ -319,158 +319,161 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                 ],
                               ),
                             ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: widget.note == null
-                                            ? const SizedBox()
-                                            : widget.note?.createdDate == ""
-                                                ? const SizedBox()
-                                                : Text(
-                                                    DateFormat.yMMMMd()
-                                                        .format(DateTime.parse(widget.note!.createdDate!)),
-                                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                        fontWeight: medium, color: Theme.of(context).hintColor),
-                                                  ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      child: Row(
                                         children: [
-                                          OutlinedButton.icon(
-                                            icon: Icon(
-                                              Icons.access_time,
-                                              size: 16,
-                                              color: Theme.of(context).colorScheme.background,
-                                            ),
-                                            onPressed: () {
-                                              DatePicker.showDateTimePicker(
-                                                context,
-                                                showTitleActions: true,
-                                                minTime: DateTime.now(),
-                                                currentTime: DateTime.now(),
-                                                maxTime: DateTime(2200, 1, 1),
-                                                onConfirm: (date) {
-                                                  _reminder.value = date.toString();
+                                          Expanded(
+                                            child: widget.note == null
+                                                ? const SizedBox()
+                                                : widget.note?.createdDate == ""
+                                                    ? const SizedBox()
+                                                    : Text(
+                                                        DateFormat.yMMMMd()
+                                                            .format(DateTime.parse(widget.note!.createdDate!)),
+                                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                            fontWeight: medium, color: Theme.of(context).hintColor),
+                                                      ),
+                                          ),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.end,
+                                            children: [
+                                              OutlinedButton.icon(
+                                                icon: Icon(
+                                                  Icons.access_time,
+                                                  size: 16,
+                                                  color: Theme.of(context).colorScheme.background,
+                                                ),
+                                                onPressed: () {
+                                                  DatePicker.showDateTimePicker(
+                                                    context,
+                                                    showTitleActions: true,
+                                                    minTime: DateTime.now(),
+                                                    currentTime: DateTime.now(),
+                                                    maxTime: DateTime(2200, 1, 1),
+                                                    onConfirm: (date) {
+                                                      _reminder.value = date.toString();
+                                                    },
+                                                    locale: LocaleType.en,
+                                                  );
                                                 },
-                                                locale: LocaleType.en,
-                                              );
-                                            },
-                                            label: Text(
-                                              "Reminder",
-                                              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                                  color: Theme.of(context).colorScheme.background, fontWeight: medium),
+                                                label: Text(
+                                                  "Reminder",
+                                                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                                      color: Theme.of(context).colorScheme.background,
+                                                      fontWeight: medium),
+                                                ),
+                                              ),
+                                              ValueListenableBuilder(
+                                                valueListenable: _reminder,
+                                                builder: (context, reminder, _) {
+                                                  return Row(
+                                                    children: [
+                                                      _reminder.value == ""
+                                                          ? const SizedBox()
+                                                          : InkWell(
+                                                              onTap: () {
+                                                                _reminder.value = "";
+                                                              },
+                                                              child: const Icon(Icons.close,
+                                                                  size: 14, color: AppColors.cRed),
+                                                            ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        _reminder.value == ""
+                                                            ? ""
+                                                            : "${DateFormat.yMMMMd().format(DateTime.parse(_reminder.value))}, ${DateFormat.jm().format(DateTime.parse(_reminder.value))}",
+                                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                            fontWeight: medium,
+                                                            fontSize: 10,
+                                                            color: Theme.of(context).hintColor),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 16, right: 12),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(right: 8),
+                                            child: Container(
+                                              height: 40,
+                                              width: 40,
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(color: AppColors.cWhite),
+                                                  color: _color.value),
                                             ),
                                           ),
-                                          ValueListenableBuilder(
-                                            valueListenable: _reminder,
-                                            builder: (context, reminder, _) {
-                                              return Row(
-                                                children: [
-                                                  _reminder.value == ""
-                                                      ? const SizedBox()
-                                                      : InkWell(
-                                                          onTap: () {
-                                                            _reminder.value = "";
-                                                          },
-                                                          child:
-                                                              const Icon(Icons.close, size: 14, color: AppColors.cRed),
-                                                        ),
-                                                  const SizedBox(width: 8),
-                                                  Text(
-                                                    _reminder.value == ""
-                                                        ? ""
-                                                        : "${DateFormat.yMMMMd().format(DateTime.parse(_reminder.value))}, ${DateFormat.jm().format(DateTime.parse(_reminder.value))}",
-                                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                        fontWeight: medium,
-                                                        fontSize: 10,
-                                                        color: Theme.of(context).hintColor),
-                                                  ),
-                                                ],
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: TextField(
+                                              controller: _titleController,
+                                              keyboardType: TextInputType.multiline,
+                                              style:
+                                                  Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: bold),
+                                              maxLines: null,
+                                              textCapitalization: TextCapitalization.sentences,
+                                              decoration: InputDecoration(
+                                                hintText: "Enter title... ",
+                                                hintStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                                    color: Theme.of(context).colorScheme.primary, fontWeight: medium),
+                                                border: const UnderlineInputBorder(borderSide: BorderSide.none),
+                                              ),
+                                            ),
+                                          ),
+                                          LikeButton(
+                                            size: 36,
+                                            isLiked: favourite,
+                                            likeBuilder: (bool isLiked) {
+                                              favourite = isLiked;
+                                              return Icon(
+                                                isLiked ? Icons.star : Icons.star_border,
+                                                color:
+                                                    isLiked ? Theme.of(context).indicatorColor : AppColors.cFadedBlue,
+                                                size: 36,
                                               );
                                             },
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 16, right: 12),
-                                  child: Row(
-                                    children: [
-                                      color == null
-                                          ? const SizedBox()
-                                          : Padding(
-                                              padding: const EdgeInsets.only(right: 8),
-                                              child: Container(
-                                                height: 40,
-                                                width: 40,
-                                                decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    border: Border.all(color: AppColors.cWhite),
-                                                    color: _color.value),
-                                              ),
-                                            ),
-                                      SizedBox(width: color == null ? 0 : 10),
-                                      Expanded(
-                                        child: TextField(
-                                          controller: _titleController,
-                                          keyboardType: TextInputType.multiline,
-                                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: bold),
-                                          maxLines: null,
-                                          textCapitalization: TextCapitalization.sentences,
-                                          decoration: InputDecoration(
-                                            hintText: "Enter title... ",
-                                            hintStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                                color: Theme.of(context).colorScheme.primary, fontWeight: medium),
-                                            border: const UnderlineInputBorder(borderSide: BorderSide.none),
-                                          ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                                      child: TextField(
+                                        controller: _textController,
+                                        keyboardType: TextInputType.multiline,
+                                        textCapitalization: TextCapitalization.sentences,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelLarge
+                                            ?.copyWith(fontWeight: regular, height: 1.4),
+                                        maxLines: null,
+                                        decoration: InputDecoration(
+                                          hintText: "Enter new note... ",
+                                          hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                              color: Theme.of(context).colorScheme.primary, fontWeight: regular),
+                                          border: const UnderlineInputBorder(borderSide: BorderSide.none),
                                         ),
                                       ),
-                                      LikeButton(
-                                        size: 36,
-                                        isLiked: favourite,
-                                        likeBuilder: (bool isLiked) {
-                                          favourite = isLiked;
-                                          return Icon(
-                                            isLiked ? Icons.star : Icons.star_border,
-                                            color: isLiked ? Theme.of(context).indicatorColor : AppColors.cFadedBlue,
-                                            size: 36,
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: TextField(
-                                    controller: _textController,
-                                    keyboardType: TextInputType.multiline,
-                                    textCapitalization: TextCapitalization.sentences,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge
-                                        ?.copyWith(fontWeight: regular, height: 1.4),
-                                    maxLines: null,
-                                    decoration: InputDecoration(
-                                      hintText: "Enter new note... ",
-                                      hintStyle: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge
-                                          ?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: regular),
-                                      border: const UnderlineInputBorder(borderSide: BorderSide.none),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                            const Spacer(),
+                            // const Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
