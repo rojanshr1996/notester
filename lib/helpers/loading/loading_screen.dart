@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:notester/helpers/loading/loading_screen_controller.dart';
-import 'package:notester/utils/app_colors.dart';
 import 'package:notester/widgets/simple_circular_loader.dart';
 import 'package:flutter/material.dart';
 
@@ -26,8 +25,8 @@ class LoadingScreen {
   }
 
   LoadingScreenController showOverlay({required BuildContext context, required String text}) {
-    final _text = StreamController<String>();
-    _text.add(text);
+    final textStream = StreamController<String>();
+    textStream.add(text);
 
     final state = Overlay.of(context);
     final renderBox = context.findRenderObject() as RenderBox;
@@ -58,7 +57,7 @@ class LoadingScreen {
                     const SimpleCircularLoader(),
                     const SizedBox(height: 20),
                     StreamBuilder(
-                      stream: _text.stream,
+                      stream: textStream.stream,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Text(
@@ -83,11 +82,11 @@ class LoadingScreen {
     state?.insert(overlay);
 
     return LoadingScreenController(close: () {
-      _text.close();
+      textStream.close();
       overlay.remove();
       return true;
     }, update: (text) {
-      _text.add(text);
+      textStream.add(text);
       return true;
     });
   }
