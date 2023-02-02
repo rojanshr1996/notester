@@ -43,6 +43,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   late ValueNotifier<String> _fileUrl;
   late ValueNotifier<String> _fileName;
   late ValueNotifier<String> _reminder;
+  late ValueNotifier<String> _createdDate;
   double progress = 0.0;
   bool favourite = false;
 
@@ -57,6 +58,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     _fileUrl = ValueNotifier<String>("");
     _fileName = ValueNotifier<String>("");
     _reminder = ValueNotifier<String>("");
+    _createdDate = ValueNotifier<String>("");
     _notesService = FirebaseCloudStorage();
     _titleController = TextEditingController();
     _textController = TextEditingController();
@@ -72,7 +74,8 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     final title = _titleController.text.trim();
     await _notesService.updateNote(
       documentId: note.documentId,
-      createdDate: "${DateTime.now()}",
+      createdDate: _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
+      // createdDate: "${DateTime.now()}",
       text: text,
       title: title,
       imageUrl: _imageUrl.value,
@@ -92,7 +95,8 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     final title = _titleController.text.trim();
     await _notesService.updateNote(
       documentId: note.documentId,
-      createdDate: "${DateTime.now()}",
+      createdDate: _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
+      // createdDate: "${DateTime.now()}",
       text: text,
       title: title,
       imageUrl: _imageUrl.value,
@@ -145,6 +149,9 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
       if (_note!.reminder != "") {
         _reminder.value = _note!.reminder!;
       }
+      if (_note!.createdDate != "") {
+        _createdDate.value = _note!.createdDate!;
+      }
       return widget.note!;
     }
 
@@ -175,7 +182,8 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     if (note != null && text.isNotEmpty) {
       await _notesService.updateNote(
         documentId: note.documentId,
-        createdDate: "${DateTime.now()}",
+        createdDate: _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
+        // createdDate: "${DateTime.now()}",
         text: text,
         title: title,
         color: "${color.value}",
@@ -202,6 +210,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     _task.dispose();
     _taskFile.dispose();
     _reminder.dispose();
+    _createdDate.dispose();
     super.dispose();
   }
 
@@ -328,17 +337,19 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                       padding: const EdgeInsets.symmetric(horizontal: 16),
                                       child: Row(
                                         children: [
-                                          Expanded(
-                                            child: widget.note == null
-                                                ? const SizedBox()
-                                                : widget.note?.createdDate == ""
+                                          ValueListenableBuilder(
+                                            valueListenable: _createdDate,
+                                            builder: (context, createdDate, _) {
+                                              return Expanded(
+                                                child: _createdDate.value == ""
                                                     ? const SizedBox()
                                                     : Text(
-                                                        DateFormat.yMMMMd()
-                                                            .format(DateTime.parse(widget.note!.createdDate!)),
+                                                        DateFormat.yMMMMd().format(DateTime.parse(_createdDate.value)),
                                                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                                             fontWeight: medium, color: Theme.of(context).hintColor),
                                                       ),
+                                              );
+                                            },
                                           ),
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -429,7 +440,8 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                               decoration: InputDecoration(
                                                 hintText: "Enter title... ",
                                                 hintStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                                    color: Theme.of(context).backgroundColor, fontWeight: medium),
+                                                    color: Theme.of(context).colorScheme.background,
+                                                    fontWeight: medium),
                                                 border: const UnderlineInputBorder(borderSide: BorderSide.none),
                                               ),
                                             ),
@@ -463,10 +475,8 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                         maxLines: null,
                                         decoration: InputDecoration(
                                           hintText: "Enter new note... ",
-                                          hintStyle: Theme.of(context)
-                                              .textTheme
-                                              .labelLarge
-                                              ?.copyWith(color: Theme.of(context).backgroundColor, fontWeight: regular),
+                                          hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                              color: Theme.of(context).colorScheme.background, fontWeight: regular),
                                           border: const UnderlineInputBorder(borderSide: BorderSide.none),
                                         ),
                                       ),

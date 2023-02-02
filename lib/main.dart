@@ -1,11 +1,7 @@
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
-import 'package:notester/bloc/postBloc/post_bloc.dart';
-import 'package:notester/bloc/postBloc/post_event.dart';
-import 'package:notester/cubit/post_cubit.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
 import 'package:notester/services/auth_services.dart';
 import 'package:notester/services/fcm_services.dart';
-import 'package:notester/services/post_service.dart';
 import 'package:notester/utils/app_colors.dart';
 import 'package:notester/view/route/app_router.dart';
 import 'package:notester/view/route/routes.dart';
@@ -54,8 +50,6 @@ class _MyAppState extends State<MyApp> {
         ],
         child: MultiBlocProvider(
           providers: [
-            BlocProvider<PostsBloc>(create: (_) => PostsBloc(PostService())..add(LoadPostEvent())),
-            BlocProvider<PostCubit>(create: (_) => PostCubit()),
             BlocProvider(create: (context) => AuthBloc(authServices: RepositoryProvider.of<AuthServices>(context)))
           ],
           child: Consumer<DarkThemeProvider>(

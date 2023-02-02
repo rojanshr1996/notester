@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed((const Duration(seconds: 2)), () {
+    Future.delayed((const Duration(milliseconds: 850)), () {
       if (mounted) {
         Utilities.removeNamedStackActivity(context, Routes.login);
       }
@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Center(
               child: Image.asset(
                 'assets/appLogo.png',
-                height: 150,
+                height: 120,
                 fit: BoxFit.fitHeight,
                 filterQuality: FilterQuality.none,
               ),
