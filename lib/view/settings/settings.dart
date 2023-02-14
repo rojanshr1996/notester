@@ -273,7 +273,7 @@ class _SettingsState extends State<Settings> {
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).hintColor),
                       ),
                       subtitle: Text(
-                        "Version 1.0.1",
+                        "Version 1.0.4",
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
                       ),
                     ),
