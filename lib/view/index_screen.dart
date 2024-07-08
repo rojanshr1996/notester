@@ -1,4 +1,8 @@
 import 'package:custom_widgets/custom_widgets.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
 import 'package:notester/helpers/loading/loading_screen.dart';
@@ -16,10 +20,6 @@ import 'package:notester/view/route/routes.dart';
 import 'package:notester/widgets/logo_widget.dart';
 import 'package:notester/widgets/settings_user_header.dart';
 import 'package:notester/widgets/simple_circular_loader.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class IndexScreen extends StatefulWidget {
@@ -74,7 +74,9 @@ class _IndexScreenState extends State<IndexScreen> {
         body: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state.isLoading) {
-              LoadingScreen().show(context: context, text: state.loadingText ?? "Please wait a moment");
+              LoadingScreen().show(
+                  context: context,
+                  text: state.loadingText ?? "Please wait a moment");
             } else {
               LoadingScreen().hide();
             }
@@ -90,7 +92,8 @@ class _IndexScreenState extends State<IndexScreen> {
                   width: Utilities.screenWidth(context),
                   height: Utilities.screenHeight(context),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 6),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -101,22 +104,30 @@ class _IndexScreenState extends State<IndexScreen> {
                               case ConnectionState.waiting:
                               case ConnectionState.active:
                                 if (snapshot.hasData) {
-                                  final userData = snapshot.data as Iterable<UserModel>;
+                                  final userData =
+                                      snapshot.data as Iterable<UserModel>;
                                   return userData.isEmpty
                                       ? const SizedBox()
                                       : SettingsUserHeader(
                                           userName: "${userData.first.name}",
-                                          profilePic: userData.first.profileImage ?? "",
+                                          profilePic:
+                                              userData.first.profileImage ?? "",
                                           onImageTap: () {
-                                            Utilities.openNamedActivity(context, Routes.enlargeImage,
-                                                arguments: ImageArgs(imageUrl: userData.first.profileImage ?? ""));
+                                            Utilities.openNamedActivity(
+                                                context, Routes.enlargeImage,
+                                                arguments: ImageArgs(
+                                                    imageUrl: userData.first
+                                                            .profileImage ??
+                                                        ""));
                                           },
                                           onPressed: () {
-                                            Utilities.openNamedActivity(context, Routes.profile,
+                                            Utilities.openNamedActivity(
+                                                context, Routes.profile,
                                                 arguments: userData.first);
                                           },
                                           onSettingsTap: () {
-                                            Utilities.openNamedActivity(context, Routes.settings);
+                                            Utilities.openNamedActivity(
+                                                context, Routes.settings);
                                           },
                                         );
                                 } else {
@@ -139,13 +150,21 @@ class _IndexScreenState extends State<IndexScreen> {
                             padding: const EdgeInsets.only(left: 25, right: 25),
                             child: IndexButtons(
                               title: "VIEW NOTES",
-                              prefixIcon: const Icon(Icons.note_rounded, size: 55, color: AppColors.cLightShade),
-                              textStyle: CustomTextStyle.headerText.copyWith(color: AppColors.cLightShade),
+                              prefixIcon: const Icon(Icons.note_rounded,
+                                  size: 55, color: AppColors.cLightShade),
+                              textStyle: CustomTextStyle.headerText
+                                  .copyWith(color: AppColors.cLightShade),
                               borderRadius: BorderRadius.circular(15),
                               splashBorderRadius: BorderRadius.circular(15),
-                              imagePath: value.darkTheme ? "assets/notesImage.png" : "assets/notesImageLight.png",
-                              buttonColor: Theme.of(context).buttonTheme.colorScheme?.primary,
-                              onPressed: () => Utilities.openNamedActivity(context, Routes.notes),
+                              imagePath: value.darkTheme
+                                  ? "assets/notesImage.png"
+                                  : "assets/notesImageLight.png",
+                              buttonColor: Theme.of(context)
+                                  .buttonTheme
+                                  .colorScheme
+                                  ?.primary,
+                              onPressed: () => Utilities.openNamedActivity(
+                                  context, Routes.notes),
                             ),
                           ),
                         ),
@@ -187,7 +206,7 @@ class IndexButtons extends StatelessWidget {
 
   final VoidCallback? onPressed;
   final BorderRadiusGeometry? borderRadius;
-  final BorderRadius? splashBorderRadius;
+  final BorderRadius splashBorderRadius;
   final Widget? prefixIcon;
   final double? buttonWidth;
   final Color? shadowColor;
@@ -202,7 +221,7 @@ class IndexButtons extends StatelessWidget {
     this.textStyle = const TextStyle(color: AppColors.cDarkBlueLight),
     this.borderRadius,
     this.prefixIcon,
-    this.splashBorderRadius,
+    required this.splashBorderRadius,
     this.buttonWidth,
     this.elevation = 4.0,
     this.shadowColor,
@@ -224,7 +243,8 @@ class IndexButtons extends StatelessWidget {
           borderRadius: splashBorderRadius,
           child: Container(
             decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
+              image: DecorationImage(
+                  image: AssetImage(imagePath), fit: BoxFit.cover),
             ),
             width: buttonWidth ?? Utilities.screenWidth(context),
             child: Column(

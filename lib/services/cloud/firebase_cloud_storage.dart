@@ -2,17 +2,18 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:notester/services/cloud/cloud_note.dart';
 import 'package:notester/services/cloud/cloud_storage_constants.dart';
 import 'package:notester/services/cloud/cloud_storage_exceptions.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseCloudStorage {
   final notes = FirebaseFirestore.instance.collection('notes');
   final users = FirebaseFirestore.instance.collection('users');
   final storageDestination = "attachments/";
   final storageUserDestination = "users/";
-  static final FirebaseCloudStorage _shared = FirebaseCloudStorage._sharedInstance();
+  static final FirebaseCloudStorage _shared =
+      FirebaseCloudStorage._sharedInstance();
 
   FirebaseCloudStorage._sharedInstance();
   factory FirebaseCloudStorage() => _shared;
@@ -48,7 +49,10 @@ class FirebaseCloudStorage {
 
   Future<Iterable<CloudNote>> getNotes({required String ownerUserId}) async {
     try {
-      return await notes.where(ownerUserIdFieldName, isEqualTo: ownerUserId).get().then(
+      return await notes
+          .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
+          .get()
+          .then(
             (value) => value.docs.map((doc) => CloudNote.fromSnapshot(doc)),
           );
     } catch (e) {
@@ -56,16 +60,21 @@ class FirebaseCloudStorage {
     }
   }
 
-  Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) => notes.snapshots().map(
-        (event) =>
-            event.docs.map((doc) => CloudNote.fromSnapshot(doc)).where((note) => note.ownerUserId == ownerUserId),
-      );
-
-  Stream<Iterable<CloudNote>> allFavouriteNotes({required String ownerUserId, bool favourite = true}) =>
+  Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) =>
       notes.snapshots().map(
             (event) => event.docs
                 .map((doc) => CloudNote.fromSnapshot(doc))
-                .where((note) => note.ownerUserId == ownerUserId && note.favourite == favourite),
+                .where((note) => note.ownerUserId == ownerUserId),
+          );
+
+  Stream<Iterable<CloudNote>> allFavouriteNotes(
+          {required String ownerUserId, bool favourite = true}) =>
+      notes.snapshots().map(
+            (event) => event.docs
+                .map((doc) => CloudNote.fromSnapshot(doc))
+                .where((note) =>
+                    note.ownerUserId == ownerUserId &&
+                    note.favourite == favourite),
           );
 
   Future<void> updateNote({
@@ -108,7 +117,8 @@ class FirebaseCloudStorage {
   UploadTask? uploadFile(String fileName, File file, {bool fromUser = false}) {
     try {
       if (fromUser) {
-        final ref = FirebaseStorage.instance.ref("$storageUserDestination$fileName");
+        final ref =
+            FirebaseStorage.instance.ref("$storageUserDestination$fileName");
         return ref.putFile(file);
       }
       final ref = FirebaseStorage.instance.ref("$storageDestination$fileName");
@@ -138,7 +148,10 @@ class FirebaseCloudStorage {
   // User Collection
   Future<Iterable<UserModel>> getUser({required String ownerUserId}) async {
     try {
-      return await users.where(ownerUserIdFieldName, isEqualTo: ownerUserId).get().then(
+      return await users
+          .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
+          .get()
+          .then(
             (value) => value.docs.map((doc) => UserModel.fromSnapshot(doc)),
           );
     } catch (e) {
@@ -146,9 +159,12 @@ class FirebaseCloudStorage {
     }
   }
 
-  Stream<Iterable<UserModel>> userData({required String ownerUserId}) => users.snapshots().map(
-        (event) => event.docs.map((doc) => UserModel.fromSnapshot(doc)).where((user) => user.userId == ownerUserId),
-      );
+  Stream<Iterable<UserModel>> userData({required String ownerUserId}) =>
+      users.snapshots().map(
+            (event) => event.docs
+                .map((doc) => UserModel.fromSnapshot(doc))
+                .where((user) => user.userId == ownerUserId),
+          );
 
   Future<void> updateUser({
     required String documentId,

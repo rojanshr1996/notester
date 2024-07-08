@@ -26,7 +26,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const SplashScreen());
 
       case Routes.login:
-        return MaterialPageRoute(builder: (_) => LoginScreen(message: (args is String ? args : "")));
+        return MaterialPageRoute(
+            builder: (_) => LoginScreen(message: (args is String ? args : "")));
 
       case Routes.index:
         return MaterialPageRoute(builder: (_) => const IndexScreen());
@@ -48,9 +49,11 @@ class AppRouter {
 
       case Routes.createUpdateNote:
         if (args is CloudNote) {
-          return MaterialPageRoute(builder: (_) => CreateUpdateNoteView(note: args));
+          return MaterialPageRoute(
+              builder: (_) => CreateUpdateNoteView(note: args));
         } else {
-          return MaterialPageRoute(builder: (_) => const CreateUpdateNoteView());
+          return MaterialPageRoute(
+              builder: (_) => const CreateUpdateNoteView());
         }
       // case Routes.createUpdateNote:
       //   if (args is CloudNote) {
@@ -61,25 +64,29 @@ class AppRouter {
 
       case Routes.pdfView:
         if (args is Args) {
-          return MaterialPageRoute(builder: (_) => PdfViewerScreen(arguments: args));
+          return MaterialPageRoute(
+              builder: (_) => PdfViewerScreen(arguments: args));
         }
         return errorRoute(settings);
 
       case Routes.enlargeImage:
         if (args is ImageArgs) {
-          return MaterialPageRoute(builder: (context) => EnlargeImage(imageArgs: args));
+          return MaterialPageRoute(
+              builder: (context) => EnlargeImage(imageArgs: args));
         }
         return errorRoute(settings);
 
       case Routes.notesImage:
         if (args is ImageArgs) {
-          return MaterialPageRoute(builder: (_) => EnlargeImage(imageArgs: args));
+          return MaterialPageRoute(
+              builder: (_) => EnlargeImage(imageArgs: args));
         }
         return errorRoute(settings);
 
       case Routes.profile:
         if (args is UserModel) {
-          return MaterialPageRoute(builder: (_) => ProfileScreen(profileData: args));
+          return MaterialPageRoute(
+              builder: (_) => ProfileScreen(profileData: args));
         } else {
           return MaterialPageRoute(builder: (_) => const ProfileScreen());
         }

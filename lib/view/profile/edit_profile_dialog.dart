@@ -1,8 +1,8 @@
 import 'package:custom_widgets/custom_widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:notester/utils/app_colors.dart';
 import 'package:notester/utils/custom_text_style.dart';
 import 'package:notester/widgets/custom_text_enter_field.dart';
-import 'package:flutter/material.dart';
 
 class EditProfileDialog extends StatelessWidget {
   final TextEditingController? nameController;
@@ -12,7 +12,12 @@ class EditProfileDialog extends StatelessWidget {
   final VoidCallback? onUpdate;
 
   const EditProfileDialog(
-      {Key? key, this.nameController, this.phoneController, this.addressController, this.formKey, this.onUpdate})
+      {Key? key,
+      this.nameController,
+      this.phoneController,
+      this.addressController,
+      this.formKey,
+      this.onUpdate})
       : super(key: key);
 
   @override
@@ -37,24 +42,35 @@ class EditProfileDialog extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                           boxShadow: [
                             BoxShadow(
-                                color: Theme.of(context).colorScheme.shadow, blurRadius: 8, offset: const Offset(0, 3)),
+                                color: Theme.of(context).colorScheme.shadow,
+                                blurRadius: 8,
+                                offset: const Offset(0, 3)),
                           ],
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
                       CustomTextEnterField(
                         textEditingController: nameController,
-                        label: Text("Full Name", style: Theme.of(context).textTheme.bodyText2),
+                        label: Text("Full Name",
+                            style: Theme.of(context).textTheme.bodyMedium),
                         textInputType: TextInputType.text,
                         style: Theme.of(context).textTheme.bodyMedium,
                         hintStyle: CustomTextStyle.hintTextLight,
-                        validator: (value) => validateField(context: context, value: value!, fieldName: "Name"),
-                        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cBlueShade)),
-                        enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-                        disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(0)),
-                        focusedErrorBorder:
-                            const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cRedAccent)),
-                        errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cRedAccent)),
+                        validator: (value) => validateField(
+                            context: context, value: value!, fieldName: "Name"),
+                        focusedBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cBlueShade)),
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide.none),
+                        disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0)),
+                        focusedErrorBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cRedAccent)),
+                        errorBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cRedAccent)),
                       ),
                     ],
                   ),
@@ -70,24 +86,35 @@ class EditProfileDialog extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                           boxShadow: [
                             BoxShadow(
-                                color: Theme.of(context).colorScheme.shadow, blurRadius: 8, offset: const Offset(0, 3)),
+                                color: Theme.of(context).colorScheme.shadow,
+                                blurRadius: 8,
+                                offset: const Offset(0, 3)),
                           ],
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
                       CustomTextEnterField(
                         textEditingController: phoneController,
-                        label: Text("Phone Number", style: Theme.of(context).textTheme.bodyText2),
+                        label: Text("Phone Number",
+                            style: Theme.of(context).textTheme.bodyMedium),
                         textInputType: TextInputType.phone,
                         style: Theme.of(context).textTheme.bodyMedium,
                         hintStyle: CustomTextStyle.hintTextLight,
-                        validator: (value) => validateField(context: context, value: value!, fieldName: "Name"),
-                        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cBlueShade)),
-                        enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-                        disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(0)),
-                        focusedErrorBorder:
-                            const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cRedAccent)),
-                        errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cRedAccent)),
+                        validator: (value) => validateField(
+                            context: context, value: value!, fieldName: "Name"),
+                        focusedBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cBlueShade)),
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide.none),
+                        disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0)),
+                        focusedErrorBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cRedAccent)),
+                        errorBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cRedAccent)),
                       ),
                     ],
                   ),
@@ -103,24 +130,37 @@ class EditProfileDialog extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                           boxShadow: [
                             BoxShadow(
-                                color: Theme.of(context).colorScheme.shadow, blurRadius: 8, offset: const Offset(0, 3)),
+                                color: Theme.of(context).colorScheme.shadow,
+                                blurRadius: 8,
+                                offset: const Offset(0, 3)),
                           ],
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
                       CustomTextEnterField(
                         textEditingController: addressController,
-                        label: Text("Address", style: Theme.of(context).textTheme.bodyText2),
+                        label: Text("Address",
+                            style: Theme.of(context).textTheme.bodyMedium),
                         textInputType: TextInputType.text,
                         style: Theme.of(context).textTheme.bodyMedium,
                         hintStyle: CustomTextStyle.hintTextLight,
-                        validator: (value) => validateField(context: context, value: value!, fieldName: "Address"),
-                        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cBlueShade)),
-                        enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-                        disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(0)),
-                        focusedErrorBorder:
-                            const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cRedAccent)),
-                        errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cRedAccent)),
+                        validator: (value) => validateField(
+                            context: context,
+                            value: value!,
+                            fieldName: "Address"),
+                        focusedBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cBlueShade)),
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide.none),
+                        disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(0)),
+                        focusedErrorBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cRedAccent)),
+                        errorBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.cRedAccent)),
                       ),
                     ],
                   ),
@@ -132,7 +172,8 @@ class EditProfileDialog extends StatelessWidget {
                     title: "UPDATE",
                     borderRadius: BorderRadius.circular(5),
                     splashBorderRadius: BorderRadius.circular(5),
-                    buttonColor: Theme.of(context).buttonTheme.colorScheme?.primary,
+                    buttonColor:
+                        Theme.of(context).buttonTheme.colorScheme?.primary,
                     onPressed: onUpdate,
                   ),
                 ),

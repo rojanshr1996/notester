@@ -37,13 +37,15 @@ class _PdfViewerScreenState extends State<PdfViewerScreen> {
       ),
       body: FutureBuilder<File>(
           future: DefaultCacheManager().getSingleFile(widget.arguments.fileUrl),
-          builder: (context, snapshot) => snapshot.connectionState == ConnectionState.waiting
-              ? const Center(child: SimpleCircularLoader())
-              : snapshot.hasData
-                  ? PdfViewer.openFile(
-                      snapshot.data!.path,
-                    )
-                  : const NoDataWidget(title: "Error opening PDF. Please try again.")),
+          builder: (context, snapshot) =>
+              snapshot.connectionState == ConnectionState.waiting
+                  ? const Center(child: SimpleCircularLoader())
+                  : snapshot.hasData
+                      ? PdfViewer.openFile(
+                          snapshot.data!.path,
+                        )
+                      : const NoDataWidget(
+                          title: "Error opening PDF. Please try again.")),
     );
   }
 }

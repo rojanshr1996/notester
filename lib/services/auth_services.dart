@@ -1,11 +1,10 @@
-import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:notester/model/auth_user.dart';
 import 'package:notester/services/auth_exceptions.dart';
 import 'package:notester/services/cloud/cloud_note.dart';
 import 'package:notester/services/cloud/cloud_storage_constants.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthServices {
   final _firebaseAuth = FirebaseAuth.instance;
@@ -13,12 +12,16 @@ class AuthServices {
 
   final googleSignIn = GoogleSignIn();
 
-  GoogleSignInAccount? _user;
+  // GoogleSignInAccount? _user;
 
   Future<AuthUser> signUp(
-      {required String email, required String password, required String fullName, String? phoneNumber}) async {
+      {required String email,
+      required String password,
+      required String fullName,
+      String? phoneNumber}) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
       final user = currentUser;
       updateUserName(fullName: fullName, phone: phoneNumber);
       if (user != null) {
@@ -42,7 +45,8 @@ class AuthServices {
     }
   }
 
-  updateUserName({required String fullName, String? phone, String? address}) async {
+  updateUserName(
+      {required String fullName, String? phone, String? address}) async {
     User? user = _firebaseAuth.currentUser;
 
     UserModel userModel = UserModel();
@@ -70,9 +74,11 @@ class AuthServices {
     }
   }
 
-  Future<AuthUser?> signIn({required String email, required String password}) async {
+  Future<AuthUser?> signIn(
+      {required String email, required String password}) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
 
       final user = currentUser;
 
@@ -134,7 +140,7 @@ class AuthServices {
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'firebase_auth/inavalid-email') {
+      if (e.code == 'firebase_auth/invalid-email') {
         throw InvalidEmailAuthException();
       } else if (e.code == 'firebase_auth/user-not-found') {
         throw UserNotFoundException();
@@ -150,16 +156,18 @@ class AuthServices {
     try {
       final googleUser = await googleSignIn.signIn();
       if (googleUser == null) return null;
-      _user = googleUser;
+
       final googleAuth = await googleUser.authentication;
-      final credential =
-          GoogleAuthProvider.credential(accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+      final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
       final signInData = await _firebaseAuth.signInWithCredential(credential);
       final user = currentUser;
       if (signInData.additionalUserInfo != null) {
         if (signInData.additionalUserInfo!.isNewUser) {
-          updateUserName(fullName: signInData.user!.displayName!, phone: signInData.user!.phoneNumber ?? "");
+          updateUserName(
+              fullName: signInData.user!.displayName!,
+              phone: signInData.user!.phoneNumber ?? "");
         }
       }
 

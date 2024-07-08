@@ -49,9 +49,13 @@ class SettingsUserHeader extends StatelessWidget {
                       memCacheHeight: 200,
                       imageUrl: profilePic,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          Center(child: SimpleCircularLoader(color: Theme.of(context).colorScheme.outline)),
-                      errorWidget: (context, url, error) => const Icon(Icons.image, color: AppColors.cLight, size: 36),
+                      placeholder: (context, url) => Center(
+                          child: SimpleCircularLoader(
+                              color: Theme.of(context).colorScheme.outline)),
+                      errorWidget: (context, url, error) => const Icon(
+                          Icons.image,
+                          color: AppColors.cLight,
+                          size: 36),
                     ),
                   ),
                 ),
@@ -62,10 +66,14 @@ class SettingsUserHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(userName, style: Theme.of(context).textTheme.displaySmall),
+                    Text(userName,
+                        style: Theme.of(context).textTheme.displaySmall),
                     const SizedBox(height: 2),
                     Text("View your profile",
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: Theme.of(context).hintColor)),
                   ],
                 ),
               ),

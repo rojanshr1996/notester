@@ -1,12 +1,12 @@
-import 'package:notester/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:notester/utils/app_colors.dart';
 
 class SliverHeaderText extends StatelessWidget {
   final double maxHeight;
   final double minHeight;
   final int notesLength;
   final String imagePath;
-  final bool fromPost;
+  final bool onlyShowFavorite;
 
   const SliverHeaderText({
     Key? key,
@@ -14,7 +14,7 @@ class SliverHeaderText extends StatelessWidget {
     required this.minHeight,
     this.notesLength = 0,
     this.imagePath = "",
-    this.fromPost = false,
+    required this.onlyShowFavorite,
   }) : super(key: key);
 
   @override
@@ -41,7 +41,8 @@ class SliverHeaderText extends StatelessWidget {
   }
 
   double _calculateExpandRatio(BoxConstraints constraints) {
-    var expandRatio = (constraints.maxHeight - minHeight) / (maxHeight - minHeight);
+    var expandRatio =
+        (constraints.maxHeight - minHeight) / (maxHeight - minHeight);
 
     if (expandRatio > 1.0) expandRatio = 1.0;
     if (expandRatio < 0.0) expandRatio = 0.0;
@@ -51,7 +52,9 @@ class SliverHeaderText extends StatelessWidget {
 
   Align _buildTitle(Animation<double> animation) {
     return Align(
-      alignment: AlignmentTween(begin: Alignment.bottomCenter, end: Alignment.bottomLeft).evaluate(animation),
+      alignment: AlignmentTween(
+              begin: Alignment.bottomCenter, end: Alignment.bottomLeft)
+          .evaluate(animation),
       child: Container(
         margin: const EdgeInsets.only(bottom: 15, left: 20, right: 20),
         child: Column(
@@ -59,24 +62,22 @@ class SliverHeaderText extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              fromPost ? "All Posts" : "All Notes",
+              onlyShowFavorite ? 'Favourites' : "All Notes",
               style: TextStyle(
-                  fontSize: Tween<double>(begin: 18, end: 32).evaluate(animation),
+                  fontSize:
+                      Tween<double>(begin: 18, end: 32).evaluate(animation),
                   color: AppColors.cWhite,
                   fontWeight: FontWeight.w600),
             ),
             notesLength == 0
                 ? const SizedBox()
                 : Text(
-                    fromPost
-                        ? notesLength == 1
-                            ? "$notesLength post"
-                            : "$notesLength posts"
-                        : notesLength == 1
-                            ? "$notesLength note"
-                            : "$notesLength notes",
+                    notesLength == 1
+                        ? "$notesLength note"
+                        : "$notesLength notes",
                     style: TextStyle(
-                      fontSize: Tween<double>(begin: 0, end: 14).evaluate(animation),
+                      fontSize:
+                          Tween<double>(begin: 0, end: 14).evaluate(animation),
                       color: AppColors.cLightShade,
                     ),
                   ),

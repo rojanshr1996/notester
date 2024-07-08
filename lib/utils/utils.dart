@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:custom_widgets/custom_widgets.dart';
@@ -32,7 +31,10 @@ class Utils {
     return sharedPreferences.getBool("isAuthenticated");
   }
 
-  static displaySnackbar({required BuildContext context, required String message, Color? backgroundColor}) {
+  static displaySnackbar(
+      {required BuildContext context,
+      required String message,
+      Color? backgroundColor}) {
     Future.delayed(const Duration(milliseconds: 500), () {
       Utilities.getSnackBar(
         context: context,
@@ -104,7 +106,8 @@ class Utils {
 
   static Future<File?> addImage(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
-    final XFile? result = await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
+    final XFile? result =
+        await picker.pickImage(source: ImageSource.gallery, imageQuality: 50);
     if (result != null) {
       File? file = File(result.path);
       return file;
@@ -114,8 +117,17 @@ class Utils {
   }
 
   static Future<File?> addFile(BuildContext context) async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'docx', 'doc', 'pptx']);
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: [
+      'pdf',
+      'docx',
+      'doc',
+      'pptx',
+      'PDF',
+      'DOCX',
+      'DOC',
+      'PPTX',
+    ]);
 
     if (result != null) {
       File? file = File(result.files.single.path ?? "");
@@ -126,9 +138,14 @@ class Utils {
   }
 
   static launchFile(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
+    final Uri link = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(link)) {
+        await launchUrl(link);
+      } else {
+        throw 'Unable to open url : $url';
+      }
+    } catch (exception) {
       throw 'Unable to open url : $url';
     }
   }

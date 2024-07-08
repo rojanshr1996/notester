@@ -52,10 +52,12 @@ class EnlargeImage extends StatelessWidget {
                       memCacheHeight: 1500,
                       filterQuality: FilterQuality.none,
                       imageUrl: imageArgs.imageUrl,
-                      placeholder: (context, url) => const Center(child: SimpleCircularLoader()),
+                      placeholder: (context, url) =>
+                          const Center(child: SimpleCircularLoader()),
                       fit: BoxFit.contain,
                       errorWidget: (context, url, error) => const Center(
-                        child: Icon(Icons.broken_image, color: AppColors.cBlueAccent, size: 100),
+                        child: Icon(Icons.broken_image,
+                            color: AppColors.cBlueAccent, size: 100),
                       ),
                     ),
                   ),
@@ -70,8 +72,9 @@ class EnlargeImage extends StatelessWidget {
                 child: Container(
                   height: 42,
                   width: 42,
-                  decoration:
-                      BoxDecoration(color: AppColors.cGrey.withOpacity(0.8), borderRadius: BorderRadius.circular(25)),
+                  decoration: BoxDecoration(
+                      color: AppColors.cGrey.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(25)),
                   child: Center(
                     child: BackButton(
                       onPressed: () {

@@ -61,7 +61,9 @@ class HelpScreenState extends State<HelpScreen> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge
-                                    ?.copyWith(color: AppColors.cGrey, fontWeight: medium),
+                                    ?.copyWith(
+                                        color: AppColors.cGrey,
+                                        fontWeight: medium),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -77,7 +79,9 @@ class HelpScreenState extends State<HelpScreen> {
                                     color: Theme.of(context).primaryColor,
                                     boxShadow: [
                                       BoxShadow(
-                                          color: Theme.of(context).colorScheme.shadow,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .shadow,
                                           blurRadius: 8,
                                           offset: const Offset(0, 3)),
                                     ],
@@ -86,18 +90,26 @@ class HelpScreenState extends State<HelpScreen> {
                                 ),
                                 CustomTextEnterField(
                                   textEditingController: _helpController,
-                                  label: Text("How can we help you?", style: Theme.of(context).textTheme.bodyMedium),
+                                  label: Text("How can we help you?",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium),
                                   textInputType: TextInputType.emailAddress,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                   hintStyle: CustomTextStyle.hintTextLight,
-                                  focusedBorder:
-                                      const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cBlueShade)),
-                                  enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
-                                  disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(0)),
-                                  focusedErrorBorder:
-                                      const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cRedAccent)),
-                                  errorBorder:
-                                      const OutlineInputBorder(borderSide: BorderSide(color: AppColors.cRedAccent)),
+                                  focusedBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: AppColors.cBlueShade)),
+                                  enabledBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                  disabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(0)),
+                                  focusedErrorBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: AppColors.cRedAccent)),
+                                  errorBorder: const OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: AppColors.cRedAccent)),
                                 ),
                               ],
                             ),
@@ -112,7 +124,8 @@ class HelpScreenState extends State<HelpScreen> {
                   child: CustomButton(
                     title: "SUBMIT",
                     borderRadius: BorderRadius.circular(5),
-                    buttonColor: Theme.of(context).buttonTheme.colorScheme?.primary,
+                    buttonColor:
+                        Theme.of(context).buttonTheme.colorScheme?.primary,
                     onPressed: () {
                       if (_helpController.text.isNotEmpty) {
                         send();

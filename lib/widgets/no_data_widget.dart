@@ -12,7 +12,10 @@ class NoDataWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = textStyle ??
-        TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.background);
+        TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.surface);
     return Center(
       child: Text(
         title,
@@ -34,8 +37,11 @@ class RefreshNoData extends StatelessWidget {
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final style =
-        textStyle ?? TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Theme.of(context).primaryColor);
+    final style = textStyle ??
+        TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).primaryColor);
     return Stack(
       children: [
         ListView(),

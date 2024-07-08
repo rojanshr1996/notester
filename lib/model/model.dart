@@ -6,7 +6,11 @@ class Photo {
   final String thumbnailUrl;
 
   const Photo(
-      {required this.albumId, required this.id, required this.title, required this.url, required this.thumbnailUrl});
+      {required this.albumId,
+      required this.id,
+      required this.title,
+      required this.url,
+      required this.thumbnailUrl});
 
   factory Photo.fromJson(Map<String, dynamic> json) {
     return Photo(

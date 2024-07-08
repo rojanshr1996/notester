@@ -98,19 +98,26 @@ class CustomTextEnterField extends StatelessWidget {
         errorStyle: errorStyle,
         focusedBorder: focusedBorder ??
             OutlineInputBorder(
-                borderSide: const BorderSide(color: AppColors.cBlueShade), borderRadius: BorderRadius.circular(10)),
+                borderSide: const BorderSide(color: AppColors.cBlueShade),
+                borderRadius: BorderRadius.circular(10)),
         enabledBorder: enabledBorder ??
             OutlineInputBorder(
-                borderSide: BorderSide(color: themeProvider.darkTheme ? AppColors.transparent : AppColors.cFadedBlue),
+                borderSide: BorderSide(
+                    color: themeProvider.darkTheme
+                        ? AppColors.transparent
+                        : AppColors.cFadedBlue),
                 borderRadius: BorderRadius.circular(10)),
-        disabledBorder: disabledBorder ?? OutlineInputBorder(borderRadius: BorderRadius.circular(0)),
+        disabledBorder: disabledBorder ??
+            OutlineInputBorder(borderRadius: BorderRadius.circular(0)),
         focusedErrorBorder: focusedErrorBorder ??
             OutlineInputBorder(
-                borderSide: const BorderSide(color: AppColors.cRed), borderRadius: BorderRadius.circular(10)),
+                borderSide: const BorderSide(color: AppColors.cRed),
+                borderRadius: BorderRadius.circular(10)),
         errorMaxLines: 2,
         errorBorder: errorBorder ??
             OutlineInputBorder(
-                borderSide: const BorderSide(color: AppColors.cRed), borderRadius: BorderRadius.circular(10)),
+                borderSide: const BorderSide(color: AppColors.cRed),
+                borderRadius: BorderRadius.circular(10)),
         hintStyle: hintStyle,
       ),
     );

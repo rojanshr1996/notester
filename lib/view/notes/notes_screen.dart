@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_widgets/custom_widgets.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:notester/model/model.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
 import 'package:notester/services/auth_services.dart';
@@ -18,11 +20,9 @@ import 'package:notester/widgets/default_loading_screen.dart';
 import 'package:notester/widgets/no_data_widget.dart';
 import 'package:notester/widgets/simple_circular_loader.dart';
 import 'package:notester/widgets/sliver_header_text.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:path/path.dart' as path;
 
 class NotesScreen extends StatefulWidget {
   const NotesScreen({Key? key}) : super(key: key);
@@ -58,14 +58,15 @@ class _NotesScreenState extends State<NotesScreen> {
     super.initState();
   }
 
-  void _snapAppbar() {
+  void _snapAppBar() {
     final scrollDistance = maxHeight - minHeight;
 
     if (_controller.offset > 0 && _controller.offset < scrollDistance) {
-      final double snapOffset = _controller.offset / scrollDistance > 0.5 ? scrollDistance : 0;
+      final double snapOffset =
+          _controller.offset / scrollDistance > 0.5 ? scrollDistance : 0;
 
-      Future.microtask(
-          () => _controller.animateTo(snapOffset, duration: const Duration(milliseconds: 200), curve: Curves.easeIn));
+      Future.microtask(() => _controller.animateTo(snapOffset,
+          duration: const Duration(milliseconds: 200), curve: Curves.easeIn));
     }
   }
 
@@ -86,7 +87,8 @@ class _NotesScreenState extends State<NotesScreen> {
             builder: (context, task, _) {
               return StreamBuilder(
                 stream: _filterValue.value == "fav"
-                    ? _notesService.allFavouriteNotes(ownerUserId: userId!, favourite: true)
+                    ? _notesService.allFavouriteNotes(
+                        ownerUserId: userId!, favourite: true)
                     : _notesService.allNotes(ownerUserId: userId!),
                 builder: (context, snapshot) {
                   if (userId == null) {
@@ -98,9 +100,10 @@ class _NotesScreenState extends State<NotesScreen> {
                     case ConnectionState.active:
                       if (snapshot.hasData) {
                         final allNotes = snapshot.data as Iterable<CloudNote>;
+
                         return NotificationListener<ScrollEndNotification>(
                           onNotification: (_) {
-                            _snapAppbar();
+                            _snapAppBar();
                             return false;
                           },
                           child: CupertinoScrollbar(
@@ -113,52 +116,92 @@ class _NotesScreenState extends State<NotesScreen> {
                                   pinned: true,
                                   stretch: true,
                                   centerTitle: false,
-                                  shadowColor: Theme.of(context).colorScheme.shadow,
+                                  shadowColor:
+                                      Theme.of(context).colorScheme.shadow,
                                   iconTheme: Theme.of(context)
                                       .appBarTheme
                                       .iconTheme
-                                      ?.copyWith(color: Theme.of(context).colorScheme.outline),
+                                      ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outline),
                                   flexibleSpace: SliverHeaderText(
                                       maxHeight: maxHeight,
                                       minHeight: minHeight,
-                                      notesLength: allNotes.isEmpty ? 0 : allNotes.length,
-                                      imagePath:
-                                          value.darkTheme ? "assets/notesImage.png" : "assets/notesImageLight.png"),
-                                  expandedHeight: maxHeight - MediaQuery.of(context).padding.top,
+                                      notesLength: allNotes.isEmpty
+                                          ? 0
+                                          : allNotes.length,
+                                      onlyShowFavorite:
+                                          _filterValue.value.toLowerCase() ==
+                                                  'fav'
+                                              ? true
+                                              : false,
+                                      imagePath: value.darkTheme
+                                          ? "assets/notesImage.png"
+                                          : "assets/notesImageLight.png"),
+                                  expandedHeight: maxHeight -
+                                      MediaQuery.of(context).padding.top,
                                   leading: StreamBuilder(
-                                    stream: _notesService.userData(ownerUserId: userId!),
+                                    stream: _notesService.userData(
+                                        ownerUserId: userId!),
                                     builder: (context, snapshot) {
                                       switch (snapshot.connectionState) {
                                         case ConnectionState.waiting:
                                         case ConnectionState.active:
                                           if (snapshot.hasData) {
-                                            final userData = snapshot.data as Iterable<UserModel>;
+                                            final userData = snapshot.data
+                                                as Iterable<UserModel>;
                                             return userData.isEmpty
                                                 ? const SizedBox()
                                                 : Padding(
-                                                    padding: const EdgeInsets.all(8),
+                                                    padding:
+                                                        const EdgeInsets.all(8),
                                                     child: GestureDetector(
                                                       onTap: () {
-                                                        Utilities.openNamedActivity(context, Routes.settings);
+                                                        Utilities
+                                                            .openNamedActivity(
+                                                                context,
+                                                                Routes
+                                                                    .settings);
                                                       },
                                                       child: Container(
                                                         decoration: BoxDecoration(
-                                                            border: Border.all(color: Theme.of(context).primaryColor),
-                                                            color: AppColors.cDarkBlueAccent,
-                                                            shape: BoxShape.circle),
+                                                            border: Border.all(
+                                                                color: Theme
+                                                                        .of(
+                                                                            context)
+                                                                    .primaryColor),
+                                                            color: AppColors
+                                                                .cDarkBlueAccent,
+                                                            shape: BoxShape
+                                                                .circle),
                                                         child: ClipRRect(
-                                                          borderRadius: BorderRadius.circular(100),
-                                                          child: CachedNetworkImage(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      100),
+                                                          child:
+                                                              CachedNetworkImage(
                                                             memCacheHeight: 200,
-                                                            imageUrl: userData.first.profileImage ?? "",
+                                                            imageUrl: userData
+                                                                    .first
+                                                                    .profileImage ??
+                                                                "",
                                                             fit: BoxFit.cover,
                                                             placeholder: (context, url) => Center(
                                                                 child: SimpleCircularLoader(
-                                                                    color: Theme.of(context).colorScheme.outline)),
-                                                            errorWidget: (context, url, error) => const Icon(
-                                                                Icons.image,
-                                                                color: AppColors.cLight,
-                                                                size: 36),
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .outline)),
+                                                            errorWidget: (context,
+                                                                    url,
+                                                                    error) =>
+                                                                const Icon(
+                                                                    Icons.image,
+                                                                    color: AppColors
+                                                                        .cLight,
+                                                                    size: 36),
                                                           ),
                                                         ),
                                                       ),
@@ -181,70 +224,89 @@ class _NotesScreenState extends State<NotesScreen> {
                                   actions: [
                                     IconButton(
                                       onPressed: () {
-                                        Utilities.openNamedActivity(context, Routes.createUpdateNote);
+                                        Utilities.openNamedActivity(
+                                            context, Routes.createUpdateNote);
                                       },
                                       icon: Icon(
                                         Icons.add,
-                                        color: Theme.of(context).colorScheme.outline,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
                                       ),
                                     ),
-                                    allNotes.isEmpty
-                                        ? const SizedBox()
-                                        : PopupMenuButton(
-                                            color: Theme.of(context).scaffoldBackgroundColor,
-                                            elevation: 20,
-                                            enabled: true,
-                                            icon: const Icon(Icons.filter_list_rounded),
-                                            tooltip: "Filter list",
-                                            onSelected: (String value) {
-                                              _filterValue.value = value;
-                                            },
-                                            itemBuilder: (context) => [
-                                              PopupMenuItem(
-                                                value: "all",
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.list,
-                                                      color: Theme.of(context).colorScheme.primary,
-                                                    ),
-                                                    const SizedBox(width: 12),
-                                                    Text("Show All", style: Theme.of(context).textTheme.bodyLarge),
-                                                  ],
-                                                ),
+                                    PopupMenuButton(
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      elevation: 20,
+                                      enabled: true,
+                                      icon:
+                                          const Icon(Icons.filter_list_rounded),
+                                      tooltip: "Filter list",
+                                      onSelected: (String value) {
+                                        _filterValue.value = value;
+                                      },
+                                      itemBuilder: (context) => [
+                                        PopupMenuItem(
+                                          value: "all",
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.list,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
                                               ),
-                                              PopupMenuItem(
-                                                value: "fav",
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.star,
-                                                      color: Theme.of(context).colorScheme.primary,
-                                                    ),
-                                                    const SizedBox(width: 12),
-                                                    Text("Only Favourites",
-                                                        style: Theme.of(context).textTheme.bodyLarge),
-                                                  ],
-                                                ),
-                                              ),
+                                              const SizedBox(width: 12),
+                                              Text("Show All",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge),
                                             ],
-                                          )
+                                          ),
+                                        ),
+                                        PopupMenuItem(
+                                          value: "fav",
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.star,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Text("Only Favourites",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 ),
                                 if (allNotes.isNotEmpty)
                                   NotesListView(
                                     notes: allNotes,
                                     onTap: (note) {
-                                      Utilities.openNamedActivity(context, Routes.createUpdateNote, arguments: note);
+                                      Utilities.openNamedActivity(
+                                          context, Routes.createUpdateNote,
+                                          arguments: note);
                                     },
                                     onImageTap: (imageUrl) {
                                       log(imageUrl);
-                                      Utilities.openNamedActivity(context, Routes.notesImage,
-                                          arguments: ImageArgs(imageUrl: imageUrl));
+                                      Utilities.openNamedActivity(
+                                          context, Routes.notesImage,
+                                          arguments:
+                                              ImageArgs(imageUrl: imageUrl));
                                     },
                                     onFileTap: (fileArg) {
-                                      if (path.extension(fileArg.fileName) == ".pdf") {
-                                        Utilities.openNamedActivity(context, Routes.pdfView, arguments: fileArg);
+                                      if (path.extension(fileArg.fileName) ==
+                                          ".pdf") {
+                                        Utilities.openNamedActivity(
+                                            context, Routes.pdfView,
+                                            arguments: fileArg);
                                       } else {
                                         Utils.launchFile(fileArg.fileUrl);
                                       }
@@ -255,22 +317,27 @@ class _NotesScreenState extends State<NotesScreen> {
                                         onDeleteTap: () async {
                                           Utilities.closeActivity(context);
 
-                                          final shouldDelete = await showDeleteDialog(context);
+                                          final shouldDelete =
+                                              await showDeleteDialog(context);
                                           log(shouldDelete.toString());
                                           if (shouldDelete) {
                                             if (note.imageUrl != "") {
-                                              _notesService.deleteFile(note.imageUrl!);
+                                              _notesService
+                                                  .deleteFile(note.imageUrl!);
                                             }
                                             if (note.fileUrl != "") {
-                                              _notesService.deleteFile(note.fileUrl!);
+                                              _notesService
+                                                  .deleteFile(note.fileUrl!);
                                             }
-                                            await _notesService.deleteNote(documentId: note.documentId);
+                                            await _notesService.deleteNote(
+                                                documentId: note.documentId);
                                           }
                                         },
                                         onShareTap: () async {
                                           Utilities.closeActivity(context);
                                           if (note.text.isEmpty) {
-                                            await showCannotShareEmptyNoteDialog(context);
+                                            await showCannotShareEmptyNoteDialog(
+                                                context);
                                           } else {
                                             Share.share(note.text);
                                           }
@@ -282,7 +349,8 @@ class _NotesScreenState extends State<NotesScreen> {
                                   const SliverFillRemaining(
                                     hasScrollBody: false,
                                     child: Center(
-                                      child: NoDataWidget(title: "No notes available"),
+                                      child: NoDataWidget(
+                                          title: "No notes available"),
                                     ),
                                   ),
                               ],
@@ -296,7 +364,8 @@ class _NotesScreenState extends State<NotesScreen> {
                           actions: [
                             IconButton(
                               onPressed: () {
-                                Utilities.openNamedActivity(context, Routes.createUpdateNote);
+                                Utilities.openNamedActivity(
+                                    context, Routes.createUpdateNote);
                               },
                               icon: const Icon(Icons.add),
                             ),
@@ -311,7 +380,8 @@ class _NotesScreenState extends State<NotesScreen> {
                         actions: [
                           IconButton(
                             onPressed: () {
-                              Utilities.openNamedActivity(context, Routes.createUpdateNote);
+                              Utilities.openNamedActivity(
+                                  context, Routes.createUpdateNote);
                             },
                             icon: const Icon(Icons.add),
                           ),
@@ -327,11 +397,15 @@ class _NotesScreenState extends State<NotesScreen> {
     );
   }
 
-  showBottomSheet({required BuildContext context, VoidCallback? onDeleteTap, VoidCallback? onShareTap}) {
+  showBottomSheet(
+      {required BuildContext context,
+      VoidCallback? onDeleteTap,
+      VoidCallback? onShareTap}) {
     return showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0), topRight: Radius.circular(15.0)),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder: (context) {
@@ -342,13 +416,16 @@ class _NotesScreenState extends State<NotesScreen> {
             children: [
               ListTile(
                 onTap: onShareTap,
-                leading: Icon(Icons.share, color: Theme.of(context).colorScheme.background),
-                title: Text("Share", style: Theme.of(context).textTheme.bodyLarge),
+                leading: Icon(Icons.share,
+                    color: Theme.of(context).colorScheme.surface),
+                title:
+                    Text("Share", style: Theme.of(context).textTheme.bodyLarge),
               ),
               ListTile(
                 onTap: onDeleteTap,
                 leading: const Icon(Icons.delete, color: AppColors.cRedAccent),
-                title: Text("Delete", style: Theme.of(context).textTheme.bodyLarge),
+                title: Text("Delete",
+                    style: Theme.of(context).textTheme.bodyLarge),
               ),
             ],
           ),
@@ -357,88 +434,3 @@ class _NotesScreenState extends State<NotesScreen> {
     );
   }
 }
-
-
-
-// SQFLITE USAGE
-// class NotesScreen extends StatefulWidget {
-//   const NotesScreen({Key? key}) : super(key: key);
-
-//   @override
-//   State<NotesScreen> createState() => _NotesScreenState();
-// }
-
-// class _NotesScreenState extends State<NotesScreen> {
-//   late final NotesService _notesService;
-//   final AuthServices _auth = AuthServices();
-
-//   String get userEmail => _auth.currentUser!.email;
-
-//   @override
-//   void initState() {
-//     debugPrint(userEmail);
-//     _notesService = NotesService();
-//     super.initState();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("Notes"),
-//         actions: [
-//           IconButton(
-//             onPressed: () {
-//               Utilities.openNamedActivity(context, Routes.createUpdateNote);
-//             },
-//             icon: const Icon(Icons.add),
-//           ),
-//           IconButton(
-//             onPressed: () {
-//               BlocProvider.of<AuthBloc>(context).add(SignOutRequested());
-//             },
-//             icon: const Icon(Icons.logout),
-//           ),
-//         ],
-//       ),
-//       body: FutureBuilder(
-//         future: _notesService.getOrCreateuser(email: userEmail),
-//         builder: ((context, snapshot) {
-//           switch (snapshot.connectionState) {
-//             case ConnectionState.done:
-//               return StreamBuilder(
-//                 stream: _notesService.allNotes,
-//                 builder: (context, snapshot) {
-//                   switch (snapshot.connectionState) {
-//                     case ConnectionState.waiting:
-//                     case ConnectionState.active:
-//                       if (snapshot.hasData) {
-//                         final allNotes = snapshot.data as List<DatabaseNote>;
-//                         return NotesListView(
-//                             notes: allNotes,
-//                             onDeleteNote: (note) async {
-//                               await _notesService.deleteNote(id: note.id);
-//                             },
-//                             onTap: (note) {
-//                               // Utilities.openNamedActivity(context, Routes.createUpdateNote, )
-//                               Navigator.pushNamed(context, Routes.createUpdateNote, arguments: note);
-//                             });
-//                       } else {
-//                         return const Center(child: CircularProgressIndicator());
-//                       }
-
-//                     default:
-//                       return const Center(child: CircularProgressIndicator());
-//                   }
-//                 },
-//               );
-//             default:
-//               return const Center(child: CircularProgressIndicator());
-//           }
-//         }),
-//       ),
-//     );
-//   }
-// }
-
-

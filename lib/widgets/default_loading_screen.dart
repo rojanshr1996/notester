@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:notester/widgets/simple_circular_loader.dart';
 import 'package:notester/widgets/sliver_header_text.dart';
-import 'package:flutter/material.dart';
 
 class DefaultLoadingScreen extends StatelessWidget {
   final double maxHeight;
@@ -25,14 +25,11 @@ class DefaultLoadingScreen extends StatelessWidget {
           pinned: true,
           stretch: true,
           centerTitle: false,
-          flexibleSpace: fromPosts
-              ? SliverHeaderText(
-                  maxHeight: maxHeight,
-                  minHeight: minHeight,
-                  imagePath: "assets/postImage.png",
-                  fromPost: true,
-                )
-              : SliverHeaderText(maxHeight: maxHeight, minHeight: minHeight),
+          flexibleSpace: SliverHeaderText(
+            maxHeight: maxHeight,
+            minHeight: minHeight,
+            onlyShowFavorite: false,
+          ),
           expandedHeight: maxHeight - MediaQuery.of(context).padding.top,
           actions: actions,
         ),

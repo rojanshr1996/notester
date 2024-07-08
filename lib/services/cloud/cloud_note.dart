@@ -40,12 +40,15 @@ class CloudNote {
         createdDate = snapshot.data()[createdDateFieldName] as String,
         fileUrl = snapshot.data()[fileUrlFieldname] as String,
         fileName = snapshot.data()[fileFieldname] as String,
-        favourite = snapshot.data()[favouriteFieldName] == "" ? false : snapshot.data()[favouriteFieldName] as bool?,
+        favourite = snapshot.data()[favouriteFieldName] == ""
+            ? false
+            : snapshot.data()[favouriteFieldName] as bool?,
         reminder = snapshot.data()[reminderFieldName] as String?;
 }
 
-Color? _parseColor(String? colorInt) =>
-    colorInt == null || colorInt == "" ? const Color(0xFFFFFFFF) : Color(int.parse(colorInt));
+Color? _parseColor(String? colorInt) => colorInt == null || colorInt == ""
+    ? const Color(0xFFFFFFFF)
+    : Color(int.parse(colorInt));
 
 class UserModel {
   String? documentId;

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:notester/utils/app_colors.dart';
@@ -16,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed((const Duration(milliseconds: 850)), () {
+    Future.delayed((const Duration(seconds: 1)), () {
       if (mounted) {
         Utilities.removeNamedStackActivity(context, Routes.login);
       }
@@ -27,23 +28,25 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cDarkBlueAccent,
-      body: SizedBox(
-        height: Utilities.screenHeight(context),
-        width: Utilities.screenWidth(context),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Center(
-              child: Image.asset(
-                'assets/appLogo.png',
-                height: 120,
-                fit: BoxFit.fitHeight,
-                filterQuality: FilterQuality.none,
+      body: LayoutBuilder(builder: (context, constraints) {
+        return SizedBox(
+          height: constraints.maxHeight,
+          width: constraints.maxWidth,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Center(
+                child: Image.asset(
+                  'assets/notesterLogoTransparent.png',
+                  height: constraints.maxHeight * 0.5,
+                  fit: BoxFit.fitHeight,
+                  filterQuality: FilterQuality.none,
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }

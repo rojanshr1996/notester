@@ -1,14 +1,12 @@
-import 'dart:developer' as devtools show log;
-
 import 'package:custom_widgets/custom_widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
 import 'package:notester/utils/app_colors.dart';
 import 'package:notester/view/auth/login_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EmailVerifyScreen extends StatelessWidget {
   const EmailVerifyScreen({Key? key}) : super(key: key);
@@ -20,7 +18,9 @@ class EmailVerifyScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: Text((FirebaseAuth.instance.currentUser?.emailVerified ?? false) ? "Welcome" : ""),
+        title: Text((FirebaseAuth.instance.currentUser?.emailVerified ?? false)
+            ? "Welcome"
+            : ""),
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -40,7 +40,8 @@ class EmailVerifyScreen extends StatelessWidget {
                   Container(
                     height: 70,
                     width: 70,
-                    decoration: const BoxDecoration(color: AppColors.cDarkBlue, shape: BoxShape.circle),
+                    decoration: const BoxDecoration(
+                        color: AppColors.cDarkBlue, shape: BoxShape.circle),
                     child: const Icon(
                       Icons.person_outline_outlined,
                       color: AppColors.cDarkBlueLight,
@@ -49,7 +50,9 @@ class EmailVerifyScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    FirebaseAuth.instance.currentUser == null ? "" : " ${FirebaseAuth.instance.currentUser!.email}",
+                    FirebaseAuth.instance.currentUser == null
+                        ? ""
+                        : " ${FirebaseAuth.instance.currentUser!.email}",
                     style: Theme.of(context).textTheme.titleSmall,
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -70,10 +73,12 @@ class EmailVerifyScreen extends StatelessWidget {
                       title: "Confirm",
                       borderRadius: BorderRadius.circular(5),
                       splashBorderRadius: BorderRadius.circular(5),
-                      buttonColor: Theme.of(context).buttonTheme.colorScheme?.primary,
+                      buttonColor:
+                          Theme.of(context).buttonTheme.colorScheme?.primary,
                       // onPressed: () => _sendEmailVerification(context),
                       onPressed: () {
-                        BlocProvider.of<AuthBloc>(context).add(const AuthEventLogout());
+                        BlocProvider.of<AuthBloc>(context)
+                            .add(const AuthEventLogout());
                       },
                     ),
                   ),
@@ -82,10 +87,8 @@ class EmailVerifyScreen extends StatelessWidget {
                     onPressed: () => _sendEmailVerification(context),
                     child: Text(
                       "Resend Link",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: Theme.of(context).colorScheme.background),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.surface),
                     ),
                   )
                 ],
@@ -98,7 +101,8 @@ class EmailVerifyScreen extends StatelessWidget {
   }
 
   void _sendEmailVerification(context) {
-    BlocProvider.of<AuthBloc>(context).add(const AuthEventSendEmailVerification());
+    BlocProvider.of<AuthBloc>(context)
+        .add(const AuthEventSendEmailVerification());
   }
 }
 
@@ -109,7 +113,7 @@ class IndexButtons extends StatelessWidget {
 
   final VoidCallback? onPressed;
   final BorderRadiusGeometry? borderRadius;
-  final BorderRadius? splashBorderRadius;
+  final BorderRadius splashBorderRadius;
   final Widget? prefixIcon;
   final double? buttonWidth;
   final Color? shadowColor;
@@ -124,7 +128,7 @@ class IndexButtons extends StatelessWidget {
     this.textStyle = const TextStyle(color: AppColors.cDarkBlueLight),
     this.borderRadius,
     this.prefixIcon,
-    this.splashBorderRadius,
+    required this.splashBorderRadius,
     this.buttonWidth,
     this.elevation = 2.0,
     this.shadowColor,
@@ -146,7 +150,8 @@ class IndexButtons extends StatelessWidget {
           borderRadius: splashBorderRadius,
           child: Container(
             decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage(imagePath), fit: BoxFit.cover),
+              image: DecorationImage(
+                  image: AssetImage(imagePath), fit: BoxFit.cover),
             ),
             width: buttonWidth ?? Utilities.screenWidth(context),
             child: Column(

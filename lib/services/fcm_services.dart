@@ -49,7 +49,8 @@ class FcmServices {
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       log('User granted permission');
       return true;
-    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
       log('User granted provisional permission');
       return true;
     } else {
@@ -97,12 +98,14 @@ class FcmServices {
       );
       flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
       await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(channel);
 
       /// Update the iOS foreground notification presentation options to allow
       /// heads up notifications.
-      await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      await FirebaseMessaging.instance
+          .setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
@@ -110,15 +113,23 @@ class FcmServices {
     }
   }
 
-  void sendPushMessage({String fcmToken = "", required String messageBody}) async {
+  void sendPushMessage(
+      {String fcmToken = "", required String messageBody}) async {
     final sharedPreferences = await SharedPreferences.getInstance();
     final token = sharedPreferences.getString("fcmToken");
 
     try {
       final body = <String, dynamic>{
-        'notification': <String, dynamic>{'body': messageBody, 'title': 'Reminder for you!'},
+        'notification': <String, dynamic>{
+          'body': messageBody,
+          'title': 'Reminder for you!'
+        },
         'priority': 'high',
-        'data': <String, dynamic>{'click_action': 'FLUTTER_NOTIFICATION_CLICK', 'id': '1', 'status': 'done'},
+        'data': <String, dynamic>{
+          'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+          'id': '1',
+          'status': 'done'
+        },
         "to": "$token",
       };
       final response = await http.post(

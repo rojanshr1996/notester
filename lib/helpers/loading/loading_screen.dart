@@ -24,7 +24,8 @@ class LoadingScreen {
     }
   }
 
-  LoadingScreenController showOverlay({required BuildContext context, required String text}) {
+  LoadingScreenController showOverlay(
+      {required BuildContext context, required String text}) {
     final textStream = StreamController<String>();
     textStream.add(text);
 

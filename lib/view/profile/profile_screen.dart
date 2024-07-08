@@ -51,7 +51,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (widget.profileData != null) {
       nameController = TextEditingController(text: widget.profileData?.name);
       phoneController = TextEditingController(text: widget.profileData?.phone);
-      addressController = TextEditingController(text: widget.profileData?.address);
+      addressController =
+          TextEditingController(text: widget.profileData?.address);
       _imageUrl.value = widget.profileData!.profileImage!;
     }
   }
@@ -104,7 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future uploadImage() async {
     if (_imageFile.value == null) return;
     final fileName = basename(_imageFile.value!.path);
-    _task.value = _notesService.uploadFile(fileName, _imageFile.value!, fromUser: true);
+    _task.value =
+        _notesService.uploadFile(fileName, _imageFile.value!, fromUser: true);
 
     if (_task.value == null) return;
     final snapshot = await _task.value!.whenComplete(() {});
@@ -125,7 +127,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               userData = snapshot.data as Iterable<UserModel>;
               _imageUrl.value = userData.first.profileImage!;
               return IgnorePointer(
-                ignoring: _task.value?.snapshot.bytesTransferred != _task.value?.snapshot.totalBytes ? true : false,
+                ignoring: _task.value?.snapshot.bytesTransferred !=
+                        _task.value?.snapshot.totalBytes
+                    ? true
+                    : false,
                 child: Scaffold(
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   appBar: AppBar(
@@ -141,9 +146,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 showDialog(
                                   context: context,
                                   builder: (context) {
-                                    addressController.text = userData.first.address!;
+                                    addressController.text =
+                                        userData.first.address!;
                                     nameController.text = userData.first.name!;
-                                    phoneController.text = userData.first.phone!;
+                                    phoneController.text =
+                                        userData.first.phone!;
                                     return EditProfileDialog(
                                       addressController: addressController,
                                       nameController: nameController,
@@ -177,46 +184,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Container(
                                   height: Utilities.screenHeight(context) * 0.4,
                                   width: Utilities.screenWidth(context),
-                                  decoration: const BoxDecoration(color: AppColors.cDarkBlue),
+                                  decoration: const BoxDecoration(
+                                      color: AppColors.cDarkBlue),
                                   child: ValueListenableBuilder(
                                     valueListenable: _imageFile,
                                     builder: (context, imageFile, _) {
-                                      return _imageFile.value == null || _imageFile.value?.path == null
+                                      return _imageFile.value == null ||
+                                              _imageFile.value?.path == null
                                           ? ValueListenableBuilder(
                                               valueListenable: _imageUrl,
                                               builder: (context, imageUrl, _) {
                                                 return _imageUrl.value == ""
                                                     ? const SizedBox()
                                                     : CachedNetworkImage(
-                                                        imageUrl: userData.first.profileImage!,
+                                                        imageUrl: userData.first
+                                                            .profileImage!,
                                                         fit: BoxFit.cover,
-                                                        placeholder: (context, url) =>
-                                                            const Center(child: SimpleCircularLoader()),
-                                                        errorWidget: (context, url, error) => const Icon(
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            const Center(
+                                                                child:
+                                                                    SimpleCircularLoader()),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            const Icon(
                                                           Icons.image,
-                                                          color: AppColors.cLight,
+                                                          color:
+                                                              AppColors.cLight,
                                                           size: 48,
                                                         ),
                                                       );
                                               },
                                             )
-                                          : Image.file(_imageFile.value!, fit: BoxFit.cover, cacheHeight: 500);
+                                          : Image.file(_imageFile.value!,
+                                              fit: BoxFit.cover,
+                                              cacheHeight: 500);
                                     },
                                   )),
                               Container(
                                 height: Utilities.screenHeight(context) * 0.4,
                                 width: Utilities.screenWidth(context),
-                                decoration: BoxDecoration(color: AppColors.cBlackShadow),
+                                decoration: BoxDecoration(
+                                    color: AppColors.cBlackShadow),
                                 child: Center(
                                   child: Container(
-                                    decoration:
-                                        const BoxDecoration(color: AppColors.cDarkBlueAccent, shape: BoxShape.circle),
+                                    decoration: const BoxDecoration(
+                                        color: AppColors.cDarkBlueAccent,
+                                        shape: BoxShape.circle),
                                     child: Padding(
                                       padding: const EdgeInsets.all(12.0),
                                       child: Icon(
                                         Icons.photo_library,
                                         color: AppColors.cDarkBlueLight,
-                                        size: Utilities.screenHeight(context) * 0.06,
+                                        size: Utilities.screenHeight(context) *
+                                            0.06,
                                       ),
                                     ),
                                   ),
@@ -228,7 +249,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ValueListenableBuilder(
                           valueListenable: _task,
                           builder: (context, task, _) {
-                            return task != null ? buildUploadStatus(_task.value!) : const SizedBox();
+                            return task != null
+                                ? buildUploadStatus(_task.value!)
+                                : const SizedBox();
                           },
                         ),
                         // const SizedBox(height: 20),
@@ -238,7 +261,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Container(
                               width: Utilities.screenWidth(context),
                               decoration: BoxDecoration(
-                                  color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(15)),
                               child: Padding(
                                 padding: const EdgeInsets.all(15),
                                 child: ListView(
@@ -247,11 +271,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ListTile(
                                       leading: Icon(
                                         Icons.person,
-                                        color: Theme.of(context).colorScheme.secondary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
                                       ),
                                       title: Text(
                                         " ${userData.first.name}",
-                                        style: Theme.of(context).textTheme.displaySmall,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displaySmall,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -260,11 +288,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ListTile(
                                       leading: Icon(
                                         Icons.email,
-                                        color: Theme.of(context).colorScheme.secondary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
                                       ),
                                       title: Text(
                                         " ${userData.first.email}",
-                                        style: Theme.of(context).textTheme.displaySmall,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displaySmall,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -273,11 +305,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ListTile(
                                       leading: Icon(
                                         Icons.phone,
-                                        color: Theme.of(context).colorScheme.secondary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
                                       ),
                                       title: Text(
                                         " ${userData.first.phone}",
-                                        style: Theme.of(context).textTheme.displaySmall,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displaySmall,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -288,11 +324,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         : ListTile(
                                             leading: Icon(
                                               Icons.phone,
-                                              color: Theme.of(context).colorScheme.secondary,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
                                             ),
                                             title: Text(
                                               " ${userData.first.address}",
-                                              style: Theme.of(context).textTheme.displaySmall,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .displaySmall,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             ),

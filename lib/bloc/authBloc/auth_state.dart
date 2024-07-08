@@ -14,13 +14,15 @@ abstract class AuthState extends Equatable {
 
 // When the user presses the signin or signup button the state is changed to loading first and then to Authenticated.
 class AuthStateLoading extends AuthState {
-  const AuthStateLoading({required bool isLoading}) : super(isLoading: isLoading);
+  const AuthStateLoading({required bool isLoading})
+      : super(isLoading: isLoading);
   @override
   List<Object?> get props => [];
 }
 
 class AuthStateUninitialized extends AuthState {
-  const AuthStateUninitialized({required bool isLoading}) : super(isLoading: isLoading);
+  const AuthStateUninitialized({required bool isLoading})
+      : super(isLoading: isLoading);
   @override
   List<Object?> get props => [];
 }
@@ -28,14 +30,16 @@ class AuthStateUninitialized extends AuthState {
 // When the user is authenticated the state is changed to Authenticated.
 class AuthStateLoggedIn extends AuthState {
   final AuthUser user;
-  const AuthStateLoggedIn({required bool isLoading, required this.user}) : super(isLoading: isLoading);
+  const AuthStateLoggedIn({required bool isLoading, required this.user})
+      : super(isLoading: isLoading);
 
   @override
   List<Object?> get props => [];
 }
 
 class AuthStateNeedsVerification extends AuthState {
-  const AuthStateNeedsVerification({required bool isLoading}) : super(isLoading: isLoading);
+  const AuthStateNeedsVerification({required bool isLoading})
+      : super(isLoading: isLoading);
 
   @override
   List<Object?> get props => [];
@@ -44,7 +48,8 @@ class AuthStateNeedsVerification extends AuthState {
 class AuthStateLoggedOut extends AuthState {
   final Exception? exception;
 
-  const AuthStateLoggedOut({required this.exception, required bool isLoading, String? loadingText})
+  const AuthStateLoggedOut(
+      {required this.exception, required bool isLoading, String? loadingText})
       : super(isLoading: isLoading, loadingText: loadingText);
 
   @override
@@ -54,7 +59,8 @@ class AuthStateLoggedOut extends AuthState {
 class AuthStateRegistering extends AuthState {
   final Exception exception;
 
-  const AuthStateRegistering({required bool isLoading, required this.exception}) : super(isLoading: isLoading);
+  const AuthStateRegistering({required bool isLoading, required this.exception})
+      : super(isLoading: isLoading);
   @override
   List<Object?> get props => [];
 }
@@ -63,7 +69,10 @@ class AuthStateForgotPassword extends AuthState with EquatableMixin {
   final Exception? exception;
   final bool hasSentEmail;
 
-  const AuthStateForgotPassword({required bool isLoading, required this.exception, required this.hasSentEmail})
+  const AuthStateForgotPassword(
+      {required bool isLoading,
+      required this.exception,
+      required this.hasSentEmail})
       : super(isLoading: isLoading);
   @override
   List<Object?> get props => [exception, isLoading, hasSentEmail];

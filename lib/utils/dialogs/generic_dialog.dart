@@ -1,7 +1,6 @@
 import 'package:custom_widgets/custom_widgets.dart';
-import 'package:notester/utils/app_colors.dart';
-import 'package:notester/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:notester/utils/constants.dart';
 
 typedef DialogOptionBuilder<T> = Map<String, T?> Function();
 
@@ -38,7 +37,10 @@ Future<T?> showGenericDialog<T>({
             },
             child: Text(
               optionTitle,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: medium),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontWeight: medium),
             ),
           );
         }).toList(),

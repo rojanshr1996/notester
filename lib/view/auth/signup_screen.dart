@@ -1,4 +1,6 @@
 import 'package:custom_widgets/custom_widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
@@ -12,8 +14,6 @@ import 'package:notester/view/route/routes.dart';
 import 'package:notester/widgets/custom_text_enter_field.dart';
 import 'package:notester/widgets/logo_widget.dart';
 import 'package:notester/widgets/safe_area_header.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SingupScreen extends StatefulWidget {
   const SingupScreen({Key? key}) : super(key: key);
@@ -62,7 +62,9 @@ class _SingupScreenState extends State<SingupScreen> {
           body: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) async {
               if (state.isLoading) {
-                LoadingScreen().show(context: context, text: state.loadingText ?? "Please wait a moment");
+                LoadingScreen().show(
+                    context: context,
+                    text: state.loadingText ?? "Please wait a moment");
               } else {
                 LoadingScreen().hide();
               }
@@ -93,9 +95,11 @@ class _SingupScreenState extends State<SingupScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                               color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: const BorderRadius.only(bottomRight: Radius.circular(15))),
+                              borderRadius: const BorderRadius.only(
+                                  bottomRight: Radius.circular(15))),
                           child: const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 8),
                             child: LogoWidget(height: 28),
                           ),
                         ),
@@ -106,51 +110,82 @@ class _SingupScreenState extends State<SingupScreen> {
                           child: Column(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 40, 10, 60),
-                                child: Text("CREATE NEW ACCOUNT", style: Theme.of(context).textTheme.titleLarge),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 40, 10, 60),
+                                child: Text("CREATE NEW ACCOUNT",
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge),
                               ),
                               Form(
                                 key: _formKey,
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24),
+                                      padding: const EdgeInsets.only(
+                                          left: 24, right: 24),
                                       child: CustomTextEnterField(
                                         textEditingController: _nameController,
-                                        label: Text("Full Name", style: Theme.of(context).textTheme.bodyText2),
+                                        label: Text("Full Name",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium),
                                         textInputType: TextInputType.text,
-                                        fillColor: Theme.of(context).scaffoldBackgroundColor,
+                                        fillColor: Theme.of(context)
+                                            .scaffoldBackgroundColor,
                                         filled: true,
-                                        style: Theme.of(context).textTheme.bodyMedium,
-                                        hintStyle: CustomTextStyle.hintTextLight,
-                                        validator: (value) =>
-                                            validateField(context: context, value: value!, fieldName: "Name"),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                        hintStyle:
+                                            CustomTextStyle.hintTextLight,
+                                        validator: (value) => validateField(
+                                            context: context,
+                                            value: value!,
+                                            fieldName: "Name"),
                                       ),
                                     ),
                                     const SizedBox(height: 12),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24),
+                                      padding: const EdgeInsets.only(
+                                          left: 24, right: 24),
                                       child: CustomTextEnterField(
                                         textEditingController: _emailController,
-                                        label: Text("Email Address", style: Theme.of(context).textTheme.bodyText2),
-                                        textInputType: TextInputType.emailAddress,
-                                        fillColor: Theme.of(context).scaffoldBackgroundColor,
+                                        label: Text("Email Address",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium),
+                                        textInputType:
+                                            TextInputType.emailAddress,
+                                        fillColor: Theme.of(context)
+                                            .scaffoldBackgroundColor,
                                         filled: true,
-                                        style: Theme.of(context).textTheme.bodyMedium,
-                                        hintStyle: CustomTextStyle.hintTextLight,
-                                        validator: (value) => validateEmail(context: context, value: value!),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                        hintStyle:
+                                            CustomTextStyle.hintTextLight,
+                                        validator: (value) => validateEmail(
+                                            context: context, value: value!),
                                       ),
                                     ),
                                     const SizedBox(height: 12),
                                     Padding(
-                                      padding: const EdgeInsets.only(left: 24, right: 24),
+                                      padding: const EdgeInsets.only(
+                                          left: 24, right: 24),
                                       child: CustomTextEnterField(
                                         textEditingController: _phoneController,
-                                        label: Text("Phone Number", style: Theme.of(context).textTheme.bodyText2),
+                                        label: Text("Phone Number",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium),
                                         textInputType: TextInputType.phone,
-                                        style: Theme.of(context).textTheme.bodyMedium,
-                                        hintStyle: CustomTextStyle.hintTextLight,
-                                        fillColor: Theme.of(context).scaffoldBackgroundColor,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                        hintStyle:
+                                            CustomTextStyle.hintTextLight,
+                                        fillColor: Theme.of(context)
+                                            .scaffoldBackgroundColor,
                                         filled: true,
                                         validator: (value) => validateField(
                                             context: context,
@@ -158,34 +193,56 @@ class _SingupScreenState extends State<SingupScreen> {
                                             fieldName: "Phone",
                                             maxCharacter: 10,
                                             minCharater: 7),
-                                        suffixIcon: const Icon(Icons.phone, color: AppColors.cDarkBlue),
+                                        suffixIcon: const Icon(Icons.phone,
+                                            color: AppColors.cDarkBlue),
                                       ),
                                     ),
                                     const SizedBox(height: 12),
                                     Stack(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(left: 24, right: 24),
+                                          padding: const EdgeInsets.only(
+                                              left: 24, right: 24),
                                           child: ValueListenableBuilder(
                                             valueListenable: _obscureText,
-                                            builder: (context, value, child) => CustomTextEnterField(
-                                              textEditingController: _passwordController,
-                                              label: Text("Password", style: Theme.of(context).textTheme.bodyText2),
-                                              style: Theme.of(context).textTheme.bodyMedium,
-                                              textInputType: TextInputType.visiblePassword,
+                                            builder: (context, value, child) =>
+                                                CustomTextEnterField(
+                                              textEditingController:
+                                                  _passwordController,
+                                              label: Text("Password",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium,
+                                              textInputType:
+                                                  TextInputType.visiblePassword,
                                               obscureText: _obscureText.value,
-                                              hintStyle: CustomTextStyle.hintTextLight,
-                                              fillColor: Theme.of(context).scaffoldBackgroundColor,
+                                              hintStyle:
+                                                  CustomTextStyle.hintTextLight,
+                                              fillColor: Theme.of(context)
+                                                  .scaffoldBackgroundColor,
                                               filled: true,
-                                              validator: (value) => validatePassword(context: context, value: value!),
-                                              suffixIcon: _passwordController.text.isEmpty
+                                              validator: (value) =>
+                                                  validatePassword(
+                                                      context: context,
+                                                      value: value!),
+                                              suffixIcon: _passwordController
+                                                      .text.isEmpty
                                                   ? const SizedBox()
                                                   : IconButton(
                                                       onPressed: toggle,
                                                       icon: _obscureText.value
-                                                          ? const Icon(Icons.visibility, color: AppColors.cDarkBlue)
-                                                          : const Icon(Icons.visibility_off,
-                                                              color: AppColors.cDarkBlue),
+                                                          ? const Icon(
+                                                              Icons.visibility,
+                                                              color: AppColors
+                                                                  .cDarkBlue)
+                                                          : const Icon(
+                                                              Icons
+                                                                  .visibility_off,
+                                                              color: AppColors
+                                                                  .cDarkBlue),
                                                     ),
                                             ),
                                           ),
@@ -197,18 +254,25 @@ class _SingupScreenState extends State<SingupScreen> {
                               ),
                               const SizedBox(height: 60),
                               Padding(
-                                padding: const EdgeInsets.only(left: 24, right: 24),
+                                padding:
+                                    const EdgeInsets.only(left: 24, right: 24),
                                 child: CustomButton(
                                   title: "SIGN UP",
                                   elevation: 4,
                                   borderRadius: BorderRadius.circular(10),
                                   splashBorderRadius: BorderRadius.circular(10),
-                                  buttonColor: Theme.of(context).buttonTheme.colorScheme?.primary,
-                                  onPressed: () => _createAccountWithEmailAndPassword(context),
+                                  buttonColor: Theme.of(context)
+                                      .buttonTheme
+                                      .colorScheme
+                                      ?.primary,
+                                  onPressed: () =>
+                                      _createAccountWithEmailAndPassword(
+                                          context),
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 24, right: 24, top: 10),
+                                padding: const EdgeInsets.only(
+                                    left: 24, right: 24, top: 10),
                                 child: Align(
                                   alignment: Alignment.center,
                                   child: TextButton(
@@ -218,8 +282,14 @@ class _SingupScreenState extends State<SingupScreen> {
                                     },
                                     child: Text(
                                       "Already registered? Sign In",
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          color: Theme.of(context).colorScheme.background, fontWeight: semibold),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface,
+                                              fontWeight: semibold),
                                     ),
                                   ),
                                 ),

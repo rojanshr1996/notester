@@ -1,6 +1,9 @@
 import 'dart:developer';
 
 import 'package:custom_widgets/custom_widgets.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
@@ -15,9 +18,6 @@ import 'package:notester/view/auth/login_screen.dart';
 import 'package:notester/view/route/routes.dart';
 import 'package:notester/widgets/about_text_dialog.dart';
 import 'package:notester/widgets/logo_widget.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notester/widgets/settings_user_header.dart';
 import 'package:notester/widgets/simple_circular_loader.dart';
 import 'package:provider/provider.dart';
@@ -85,28 +85,38 @@ class _SettingsState extends State<Settings> {
                       child: Column(
                         children: [
                           StreamBuilder(
-                            stream: _notesService.userData(ownerUserId: userId!),
+                            stream:
+                                _notesService.userData(ownerUserId: userId!),
                             builder: (context, snapshot) {
                               switch (snapshot.connectionState) {
                                 case ConnectionState.waiting:
                                 case ConnectionState.active:
                                   if (snapshot.hasData) {
-                                    final userData = snapshot.data as Iterable<UserModel>;
+                                    final userData =
+                                        snapshot.data as Iterable<UserModel>;
                                     return userData.isEmpty
                                         ? const SizedBox()
                                         : SettingsUserHeader(
                                             userName: "${userData.first.name}",
-                                            profilePic: userData.first.profileImage ?? "",
+                                            profilePic:
+                                                userData.first.profileImage ??
+                                                    "",
                                             onImageTap: () {
-                                              Utilities.openNamedActivity(context, Routes.enlargeImage,
-                                                  arguments: ImageArgs(imageUrl: userData.first.profileImage ?? ""));
+                                              Utilities.openNamedActivity(
+                                                  context, Routes.enlargeImage,
+                                                  arguments: ImageArgs(
+                                                      imageUrl: userData.first
+                                                              .profileImage ??
+                                                          ""));
                                             },
                                             onPressed: () {
-                                              Utilities.openNamedActivity(context, Routes.profile,
+                                              Utilities.openNamedActivity(
+                                                  context, Routes.profile,
                                                   arguments: userData.first);
                                             },
                                             onSettingsTap: () {
-                                              Utilities.openNamedActivity(context, Routes.settings);
+                                              Utilities.openNamedActivity(
+                                                  context, Routes.settings);
                                             },
                                           );
                                   } else {
@@ -126,10 +136,13 @@ class _SettingsState extends State<Settings> {
                           const SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(15)),
                             child: ListTile(
                               leading: Icon(
-                                themeChange.darkTheme ? Icons.dark_mode : Icons.light_mode,
+                                themeChange.darkTheme
+                                    ? Icons.dark_mode
+                                    : Icons.light_mode,
                                 color: Theme.of(context).iconTheme.color,
                               ),
                               onTap: () => onToggleDarkMode(context),
@@ -144,14 +157,16 @@ class _SettingsState extends State<Settings> {
                                     onChanged: (value) {
                                       themeChange.darkTheme = value;
                                     },
-                                    activeColor: Theme.of(context).colorScheme.background,
+                                    activeColor:
+                                        Theme.of(context).colorScheme.surface,
                                   )),
                             ),
                           ),
                           const SizedBox(height: 10),
                           Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(15)),
                             child: ListTile(
                               leading: Icon(
                                 Icons.info_outline,
@@ -174,14 +189,16 @@ class _SettingsState extends State<Settings> {
                           const SizedBox(height: 10),
                           Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(15)),
                             child: ListTile(
                               leading: Icon(
                                 Icons.help_outline,
                                 color: Theme.of(context).iconTheme.color,
                               ),
                               onTap: () {
-                                Utilities.openNamedActivity(context, Routes.help);
+                                Utilities.openNamedActivity(
+                                    context, Routes.help);
                               },
                               title: Text(
                                 "Help & Support",
@@ -192,7 +209,8 @@ class _SettingsState extends State<Settings> {
                           const SizedBox(height: 10),
                           Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(15)),
                             child: ListTile(
                               leading: Icon(
                                 Icons.privacy_tip_outlined,
@@ -210,7 +228,8 @@ class _SettingsState extends State<Settings> {
                           const SizedBox(height: 10),
                           Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(15)),
                             child: ListTile(
                               leading: Icon(
                                 Icons.file_copy_outlined,
@@ -228,21 +247,27 @@ class _SettingsState extends State<Settings> {
                           const SizedBox(height: 10),
                           Container(
                             decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(15)),
+                                color: Theme.of(context).primaryColor,
+                                borderRadius: BorderRadius.circular(15)),
                             child: ListTile(
                               leading: Icon(
                                 Icons.logout,
                                 color: Theme.of(context).iconTheme.color,
                               ),
                               onTap: () async {
-                                final shouldLogOut = await showLogoutDialog(context);
+                                final shouldLogOut =
+                                    await showLogoutDialog(context);
                                 log(shouldLogOut.toString());
                                 if (shouldLogOut) {
-                                  final sharedPreferences = await SharedPreferences.getInstance();
-                                  sharedPreferences.setBool("notificationSent", false);
-                                  FirebaseMessaging.instance.unsubscribeFromTopic("Reminders");
+                                  final sharedPreferences =
+                                      await SharedPreferences.getInstance();
+                                  sharedPreferences.setBool(
+                                      "notificationSent", false);
+                                  FirebaseMessaging.instance
+                                      .unsubscribeFromTopic("Reminders");
                                   if (!mounted) return;
-                                  BlocProvider.of<AuthBloc>(context).add(const AuthEventLogout());
+                                  BlocProvider.of<AuthBloc>(context)
+                                      .add(const AuthEventLogout());
                                 }
                               },
                               title: Text(
@@ -259,22 +284,32 @@ class _SettingsState extends State<Settings> {
                 Container(
                   decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      borderRadius:
-                          const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15))),
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: ListTile(
                       leading: const Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: LogoWidget(height: 24),
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        child: LogoWidget(
+                          width: 50,
+                          boxFit: BoxFit.cover,
+                        ),
                       ),
                       title: Text(
                         appName.toUpperCase(),
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).hintColor),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(color: Theme.of(context).hintColor),
                       ),
                       subtitle: Text(
-                        "Version 1.0.4",
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).hintColor),
+                        "Version 1.0.2",
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: Theme.of(context).hintColor),
                       ),
                     ),
                   ),

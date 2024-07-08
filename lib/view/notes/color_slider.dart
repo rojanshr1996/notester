@@ -5,7 +5,9 @@ class ColorSlider extends StatefulWidget {
   final void Function(Color)? callBackColorTapped;
   final Color noteColor;
 
-  const ColorSlider({Key? key, this.callBackColorTapped, required this.noteColor}) : super(key: key);
+  const ColorSlider(
+      {Key? key, this.callBackColorTapped, required this.noteColor})
+      : super(key: key);
   @override
   ColorSliderState createState() => ColorSliderState();
 }
@@ -89,8 +91,10 @@ class ColorSliderState extends State<ColorSlider> {
   Widget? _checkOrNot(int index) {
     if (indexOfCurrentColor == index) {
       return Container(
-        decoration:
-            BoxDecoration(color: AppColors.cWhite, border: Border.all(color: AppColors.cGrey), shape: BoxShape.circle),
+        decoration: BoxDecoration(
+            color: AppColors.cWhite,
+            border: Border.all(color: AppColors.cGrey),
+            shape: BoxShape.circle),
         padding: const EdgeInsets.all(2),
         child: const Icon(Icons.check, color: AppColors.cDarkBlue, size: 12),
       );

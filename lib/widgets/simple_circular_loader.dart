@@ -16,17 +16,25 @@ class SimpleCircularLoader extends StatelessWidget {
   final double? buttonSize;
 
   const SimpleCircularLoader(
-      {Key? key, this.color, this.strokeWidth = 6.0, this.padding, this.backgroundColor, this.buttonSize})
+      {Key? key,
+      this.color,
+      this.strokeWidth = 6.0,
+      this.padding,
+      this.backgroundColor,
+      this.buttonSize})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Color colors = Theme.of(context).colorScheme.background;
+    Color colors = Theme.of(context).colorScheme.surface;
     return Padding(
       padding: padding ?? const EdgeInsets.all(4.0),
       child: SizedBox(
         height: buttonSize,
         width: buttonSize,
-        child: CircularProgressIndicator(color: colors, strokeWidth: strokeWidth, backgroundColor: backgroundColor),
+        child: CircularProgressIndicator(
+            color: colors,
+            strokeWidth: strokeWidth,
+            backgroundColor: backgroundColor),
       ),
     );
   }

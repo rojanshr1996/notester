@@ -1,5 +1,5 @@
-import 'package:notester/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:notester/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppColors {
@@ -42,11 +42,10 @@ class ThemeClass {
       fontFamily: "euclid",
       splashColor: AppColors.cBlueShade.withAlpha(40),
       highlightColor: AppColors.transparent,
-      backgroundColor: AppColors.cDarkBlue,
       hintColor: AppColors.cGrey,
       indicatorColor: AppColors.cDeepYellow,
       colorScheme: ColorScheme.light(
-        background: AppColors.cDarkBlue,
+        surface: AppColors.cDarkBlue,
         error: AppColors.cRedAccent,
         primary: AppColors.cDarkBlueAccent,
         secondary: AppColors.cDarkBlue,
@@ -57,30 +56,45 @@ class ThemeClass {
         highlightColor: AppColors.transparent,
         buttonColor: AppColors.cDarkBlueAccent,
         colorScheme: ColorScheme.light(
-          background: AppColors.cLight,
+          surface: AppColors.cLight,
           error: AppColors.cRedAccent,
           primary: AppColors.cDarkBlueAccent,
           secondary: AppColors.cLight,
         ),
       ),
       textTheme: const TextTheme(
-        titleLarge: TextStyle(fontSize: 28, fontWeight: black, color: AppColors.cBlack, letterSpacing: 0.5),
-        titleMedium: TextStyle(fontSize: 24, fontWeight: black, color: AppColors.cDarkBlueAccent),
-        titleSmall: TextStyle(fontSize: 20, fontWeight: black, color: AppColors.cDarkBlueAccent),
-        bodyLarge: TextStyle(fontSize: 16, fontWeight: semibold, color: AppColors.cBlack),
+        titleLarge: TextStyle(
+            fontSize: 28,
+            fontWeight: black,
+            color: AppColors.cBlack,
+            letterSpacing: 0.5),
+        titleMedium: TextStyle(
+            fontSize: 24, fontWeight: black, color: AppColors.cDarkBlueAccent),
+        titleSmall: TextStyle(
+            fontSize: 20, fontWeight: black, color: AppColors.cDarkBlueAccent),
+        bodyLarge: TextStyle(
+            fontSize: 16, fontWeight: semibold, color: AppColors.cBlack),
         bodyMedium: TextStyle(fontSize: 14, color: AppColors.cBlack),
         bodySmall: TextStyle(fontSize: 12, color: AppColors.cBlack),
-        displayLarge: TextStyle(fontSize: 24, color: AppColors.cBlack, fontWeight: bold),
-        displayMedium: TextStyle(fontSize: 20, color: AppColors.cBlack, fontWeight: bold),
-        displaySmall: TextStyle(fontSize: 18, color: AppColors.cBlack, fontWeight: semibold),
+        displayLarge:
+            TextStyle(fontSize: 24, color: AppColors.cBlack, fontWeight: bold),
+        displayMedium:
+            TextStyle(fontSize: 20, color: AppColors.cBlack, fontWeight: bold),
+        displaySmall: TextStyle(
+            fontSize: 18, color: AppColors.cBlack, fontWeight: semibold),
         labelSmall: TextStyle(fontSize: 12, color: AppColors.cBlack),
         labelMedium: TextStyle(color: AppColors.cDarkBlue),
-        labelLarge: TextStyle(fontSize: 16, color: AppColors.cBlack, fontWeight: semibold),
+        labelLarge: TextStyle(
+            fontSize: 16, color: AppColors.cBlack, fontWeight: semibold),
       ),
       appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.transparent,
           iconTheme: IconThemeData(color: AppColors.cDarkBlueAccent),
-          titleTextStyle: TextStyle(fontSize: 20, color: AppColors.cDarkBlue, fontWeight: bold, fontFamily: "euclid")));
+          titleTextStyle: TextStyle(
+              fontSize: 20,
+              color: AppColors.cDarkBlue,
+              fontWeight: bold,
+              fontFamily: "euclid")));
 
   static ThemeData darkTheme = ThemeData(
     scaffoldBackgroundColor: AppColors.cDarkBlueAccent,
@@ -88,7 +102,6 @@ class ThemeClass {
     fontFamily: "euclid",
     splashColor: AppColors.cBlueShade.withAlpha(40),
     highlightColor: AppColors.transparent,
-    backgroundColor: AppColors.cLight,
     hintColor: AppColors.cFadedBlue,
     indicatorColor: AppColors.cYellow,
     colorScheme: ColorScheme.dark(
@@ -96,22 +109,33 @@ class ThemeClass {
       primary: AppColors.cDarkBlue,
       secondary: AppColors.cDarkBlueAccent,
       shadow: AppColors.cBlackShadow.withAlpha(150),
-      background: AppColors.cLight,
+      surface: AppColors.cLight,
       outline: AppColors.cLight,
     ),
     textTheme: const TextTheme(
-      titleLarge: TextStyle(fontSize: 28, fontWeight: black, color: AppColors.cLight, letterSpacing: 0.5),
-      titleMedium: TextStyle(fontSize: 24, fontWeight: bold, color: AppColors.cLight),
-      titleSmall: TextStyle(fontSize: 20, fontWeight: bold, color: AppColors.cLight),
-      bodyLarge: TextStyle(fontSize: 16, fontWeight: semibold, color: AppColors.cLight),
+      titleLarge: TextStyle(
+          fontSize: 28,
+          fontWeight: black,
+          color: AppColors.cLight,
+          letterSpacing: 0.5),
+      titleMedium:
+          TextStyle(fontSize: 24, fontWeight: bold, color: AppColors.cLight),
+      titleSmall:
+          TextStyle(fontSize: 20, fontWeight: bold, color: AppColors.cLight),
+      bodyLarge: TextStyle(
+          fontSize: 16, fontWeight: semibold, color: AppColors.cLight),
       bodyMedium: TextStyle(fontSize: 14, color: AppColors.cLight),
       bodySmall: TextStyle(fontSize: 12, color: AppColors.cLight),
-      displayLarge: TextStyle(fontSize: 24, color: AppColors.cLight, fontWeight: bold),
-      displayMedium: TextStyle(fontSize: 20, color: AppColors.cLight, fontWeight: bold),
-      displaySmall: TextStyle(fontSize: 18, color: AppColors.cLight, fontWeight: semibold),
+      displayLarge:
+          TextStyle(fontSize: 24, color: AppColors.cLight, fontWeight: bold),
+      displayMedium:
+          TextStyle(fontSize: 20, color: AppColors.cLight, fontWeight: bold),
+      displaySmall: TextStyle(
+          fontSize: 18, color: AppColors.cLight, fontWeight: semibold),
       labelSmall: TextStyle(fontSize: 12, color: AppColors.cLight),
       labelMedium: TextStyle(color: AppColors.cLight),
-      labelLarge: TextStyle(fontSize: 16, color: AppColors.cLight, fontWeight: semibold),
+      labelLarge: TextStyle(
+          fontSize: 16, color: AppColors.cLight, fontWeight: semibold),
     ),
     buttonTheme: const ButtonThemeData(
       buttonColor: AppColors.cDarkBlueAccent,
@@ -126,7 +150,11 @@ class ThemeClass {
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.transparent,
       iconTheme: IconThemeData(color: AppColors.cLight),
-      titleTextStyle: TextStyle(fontSize: 20, color: AppColors.cLight, fontWeight: bold, fontFamily: "euclid"),
+      titleTextStyle: TextStyle(
+          fontSize: 20,
+          color: AppColors.cLight,
+          fontWeight: bold,
+          fontFamily: "euclid"),
     ),
   );
 }
