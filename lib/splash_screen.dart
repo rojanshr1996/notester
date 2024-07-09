@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Center(
                 child: Image.asset(
                   'assets/notesterLogoTransparent.png',
-                  height: constraints.maxHeight * 0.5,
+                  height: constraints.maxHeight * 0.4,
                   fit: BoxFit.fitHeight,
                   filterQuality: FilterQuality.none,
                 ),

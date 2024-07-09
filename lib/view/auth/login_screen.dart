@@ -116,7 +116,7 @@ class LoginScreenState extends State<LoginScreen> {
                               children: [
                                 LogoWidget(
                                     height: constraints.maxHeight * 0.25),
-                                const SizedBox(height: 25),
+                                const SizedBox(height: 15),
                                 Form(
                                   key: _formKey,
                                   child: Column(

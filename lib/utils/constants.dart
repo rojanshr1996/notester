@@ -6,7 +6,6 @@ const String termsUrl =
     "https://www.termsfeed.com/live/2afbfedc-d181-4938-a22b-c56d8afe0307";
 const String appName = "Notester";
 
-const FontWeight light = FontWeight.w300;
 const FontWeight regular = FontWeight.w400;
 const FontWeight medium = FontWeight.w500;
 const FontWeight semibold = FontWeight.w600;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notester/widgets/logo_widget.dart';
 
 class AboutTextDialog extends StatelessWidget {
   const AboutTextDialog({Key? key}) : super(key: key);
@@ -8,10 +9,11 @@ class AboutTextDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const LogoWidget(height: 80),
             Text(
               "Notester",
               style: Theme.of(context)

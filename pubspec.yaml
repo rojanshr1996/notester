@@ -43,6 +43,7 @@ dependencies:
   flutter_email_sender: ^5.2.0
   firebase_messaging: ^14.9.4
   flutter_local_notifications: ^16.3.3
+  flutter_screenutil: ^5.9.3
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -77,6 +78,4 @@ flutter:
           weight: 500
         - asset: fonts/euclidCircularARegular.ttf
           weight: 400
-        - asset: fonts/euclidCircularALight.ttf
-          weight: 300
 

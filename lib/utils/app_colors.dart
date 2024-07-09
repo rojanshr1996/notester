@@ -62,6 +62,9 @@ class ThemeClass {
           secondary: AppColors.cLight,
         ),
       ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: AppColors.cDarkBlueAccent,
+      ),
       textTheme: const TextTheme(
         titleLarge: TextStyle(
             fontSize: 28,
@@ -136,6 +139,9 @@ class ThemeClass {
       labelMedium: TextStyle(color: AppColors.cLight),
       labelLarge: TextStyle(
           fontSize: 16, color: AppColors.cLight, fontWeight: semibold),
+    ),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: AppColors.cLight,
     ),
     buttonTheme: const ButtonThemeData(
       buttonColor: AppColors.cDarkBlueAccent,

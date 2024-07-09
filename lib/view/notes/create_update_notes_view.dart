@@ -360,7 +360,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 16),
+                                          horizontal: 16, vertical: 10),
                                       child: Row(
                                         children: [
                                           ValueListenableBuilder(
@@ -388,7 +388,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                               );
                                             },
                                           ),
-                                          Column(
+                                          const Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.end,
                                             children: [
@@ -417,46 +417,34 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                               //         color: Theme.of(context).colorScheme.surface, fontWeight: medium),
                                               //   ),
                                               // ),
-                                              ValueListenableBuilder(
-                                                valueListenable: _reminder,
-                                                builder:
-                                                    (context, reminder, _) {
-                                                  return Row(
-                                                    children: [
-                                                      _reminder.value == ""
-                                                          ? const SizedBox()
-                                                          : InkWell(
-                                                              onTap: () {
-                                                                _reminder
-                                                                    .value = "";
-                                                              },
-                                                              child: const Icon(
-                                                                  Icons.close,
-                                                                  size: 14,
-                                                                  color:
-                                                                      AppColors
-                                                                          .cRed),
-                                                            ),
-                                                      const SizedBox(width: 8),
-                                                      Text(
-                                                        _reminder.value == ""
-                                                            ? ""
-                                                            : "${DateFormat.yMMMMd().format(DateTime.parse(_reminder.value))}, ${DateFormat.jm().format(DateTime.parse(_reminder.value))}",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodySmall
-                                                            ?.copyWith(
-                                                                fontWeight:
-                                                                    medium,
-                                                                fontSize: 10,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .hintColor),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              ),
+                                              // ValueListenableBuilder(
+                                              //   valueListenable: _reminder,
+                                              //   builder: (context, reminder, _) {
+                                              //     return Row(
+                                              //       children: [
+                                              //         _reminder.value == ""
+                                              //             ? const SizedBox()
+                                              //             : InkWell(
+                                              //                 onTap: () {
+                                              //                   _reminder.value = "";
+                                              //                 },
+                                              //                 child: const Icon(Icons.close,
+                                              //                     size: 14, color: AppColors.cRed),
+                                              //               ),
+                                              //         const SizedBox(width: 8),
+                                              //         Text(
+                                              //           _reminder.value == ""
+                                              //               ? ""
+                                              //               : "${DateFormat.yMMMMd().format(DateTime.parse(_reminder.value))}, ${DateFormat.jm().format(DateTime.parse(_reminder.value))}",
+                                              //           style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                              //               fontWeight: medium,
+                                              //               fontSize: 10,
+                                              //               color: Theme.of(context).hintColor),
+                                              //         ),
+                                              //       ],
+                                              //     );
+                                              //   },
+                                              // ),
                                             ],
                                           ),
                                         ],

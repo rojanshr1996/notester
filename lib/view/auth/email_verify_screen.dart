@@ -6,6 +6,7 @@ import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
 import 'package:notester/utils/app_colors.dart';
+import 'package:notester/utils/constants.dart';
 import 'package:notester/view/auth/login_screen.dart';
 
 class EmailVerifyScreen extends StatelessWidget {
@@ -53,7 +54,10 @@ class EmailVerifyScreen extends StatelessWidget {
                     FirebaseAuth.instance.currentUser == null
                         ? ""
                         : " ${FirebaseAuth.instance.currentUser!.email}",
-                    style: Theme.of(context).textTheme.titleSmall,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontWeight: semibold),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
