@@ -1,21 +1,20 @@
+import 'package:flutter/material.dart';
+import 'package:notester/app_update_screen.dart';
 import 'package:notester/model/model.dart';
 import 'package:notester/services/cloud/cloud_note.dart';
 import 'package:notester/splash_screen.dart';
+import 'package:notester/view/auth/email_verify_screen.dart';
 import 'package:notester/view/auth/forgot_password_view.dart';
 import 'package:notester/view/auth/login_screen.dart';
 import 'package:notester/view/auth/signup_screen.dart';
-import 'package:notester/view/auth/email_verify_screen.dart';
-import 'package:notester/view/index_screen.dart';
 import 'package:notester/view/notes/create_update_notes_view.dart';
 import 'package:notester/view/notes/notes_screen.dart';
 import 'package:notester/view/notes/pdf_viewer_screen.dart';
 import 'package:notester/view/profile/profile_screen.dart';
-
 import 'package:notester/view/route/routes.dart';
 import 'package:notester/view/settings/help_screen.dart';
 import 'package:notester/view/settings/settings.dart';
 import 'package:notester/widgets/enlarge_image.dart';
-import 'package:flutter/material.dart';
 
 class AppRouter {
   AppRouter._();
@@ -25,15 +24,17 @@ class AppRouter {
       case Routes.splash:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
 
+      case Routes.appUpdateScreen:
+        return MaterialPageRoute(builder: (_) {
+          return const AppUpdateScreen();
+        });
+
       case Routes.login:
         return MaterialPageRoute(
             builder: (_) => LoginScreen(message: (args is String ? args : "")));
 
-      case Routes.index:
-        return MaterialPageRoute(builder: (_) => const IndexScreen());
-
       case Routes.register:
-        return MaterialPageRoute(builder: (_) => const SingupScreen());
+        return MaterialPageRoute(builder: (_) => const SignupScreen());
 
       case Routes.notes:
         return MaterialPageRoute(builder: (_) => const NotesScreen());

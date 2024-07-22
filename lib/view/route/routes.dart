@@ -2,7 +2,7 @@ class Routes {
   Routes._();
   static const String splash = '/';
   static const String login = '/login';
-  static const String index = '/index';
+  // static const String index = '/index';
   static const String register = '/register';
   static const String post = '/post';
   static const String postDetail = '/post/detail';
@@ -17,4 +17,6 @@ class Routes {
   static const String enlargeImage = '/enlargeImage';
   static const String pdfView = '/pdfView';
   static const String help = '/help';
+
+  static const String appUpdateScreen = '/appUpdateScreen';
 }

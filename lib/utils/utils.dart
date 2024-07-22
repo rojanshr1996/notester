@@ -149,4 +149,25 @@ class Utils {
       throw 'Unable to open url : $url';
     }
   }
+
+  static Future<bool> launchLink({required String urlPath}) async {
+    final Uri link = Uri.parse(urlPath);
+
+    try {
+      if (await canLaunchUrl(link)) {
+        return await launchUrl(link);
+      } else {
+        return false;
+      }
+    } catch (exception) {
+      return false;
+    }
+  }
+
+  static bool isNewerVersion(String version1, String version2) {
+    // Assuming versions are in format x.y.z and comparing them as strings
+    return version1 == '' || version2 == ''
+        ? false
+        : version1.compareTo(version2) > 0;
+  }
 }

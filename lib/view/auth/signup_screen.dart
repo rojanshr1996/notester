@@ -1,6 +1,7 @@
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
@@ -15,14 +16,14 @@ import 'package:notester/widgets/custom_text_enter_field.dart';
 import 'package:notester/widgets/logo_widget.dart';
 import 'package:notester/widgets/safe_area_header.dart';
 
-class SingupScreen extends StatefulWidget {
-  const SingupScreen({Key? key}) : super(key: key);
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({Key? key}) : super(key: key);
 
   @override
-  _SingupScreenState createState() => _SingupScreenState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _SingupScreenState extends State<SingupScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   late ValueNotifier<bool> _obscureText;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
@@ -79,7 +80,8 @@ class _SingupScreenState extends State<SingupScreen> {
               }
 
               if (state is AuthStateLoggedIn) {
-                Utilities.replaceNamedActivity(context, Routes.index);
+                if (!context.mounted) return;
+                Utilities.removeNamedStackActivity(context, Routes.notes);
               }
             },
             builder: (context, state) {
@@ -97,10 +99,10 @@ class _SingupScreenState extends State<SingupScreen> {
                               color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: const BorderRadius.only(
                                   bottomRight: Radius.circular(15))),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 8),
-                            child: LogoWidget(height: 28),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 2),
+                            child: LogoWidget(height: 50.h),
                           ),
                         ),
                       ),
@@ -124,6 +126,8 @@ class _SingupScreenState extends State<SingupScreen> {
                                       padding: const EdgeInsets.only(
                                           left: 24, right: 24),
                                       child: CustomTextEnterField(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
                                         textEditingController: _nameController,
                                         label: Text("Full Name",
                                             style: Theme.of(context)
@@ -149,6 +153,8 @@ class _SingupScreenState extends State<SingupScreen> {
                                       padding: const EdgeInsets.only(
                                           left: 24, right: 24),
                                       child: CustomTextEnterField(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
                                         textEditingController: _emailController,
                                         label: Text("Email Address",
                                             style: Theme.of(context)
@@ -173,6 +179,8 @@ class _SingupScreenState extends State<SingupScreen> {
                                       padding: const EdgeInsets.only(
                                           left: 24, right: 24),
                                       child: CustomTextEnterField(
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
                                         textEditingController: _phoneController,
                                         label: Text("Phone Number",
                                             style: Theme.of(context)
@@ -207,6 +215,8 @@ class _SingupScreenState extends State<SingupScreen> {
                                             valueListenable: _obscureText,
                                             builder: (context, value, child) =>
                                                 CustomTextEnterField(
+                                              autovalidateMode: AutovalidateMode
+                                                  .onUserInteraction,
                                               textEditingController:
                                                   _passwordController,
                                               label: Text("Password",

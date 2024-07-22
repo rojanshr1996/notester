@@ -144,6 +144,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                                             ),
                                           ),
                                           CustomTextEnterField(
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
                                             textEditingController:
                                                 _emailController,
                                             label: Text("Email Address",

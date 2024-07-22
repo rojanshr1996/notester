@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.2+4
+version: 1.1.0+5
 
 environment:
    sdk: '>=3.0.0 <4.0.0'
@@ -42,8 +42,11 @@ dependencies:
   url_launcher: ^6.2.6
   flutter_email_sender: ^5.2.0
   firebase_messaging: ^14.9.4
-  flutter_local_notifications: ^16.3.3
   flutter_screenutil: ^5.9.3
+  firebase_remote_config: ^4.4.7
+  package_info_plus: ^8.0.0
+  get_it: ^7.7.0
+  firebase_crashlytics: ^3.5.7
 
 flutter_launcher_icons:
   android: "launcher_icon"

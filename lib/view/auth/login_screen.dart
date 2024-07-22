@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
@@ -60,8 +59,6 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
-
     context.read<AuthBloc>().add(const AuthEventInitialize());
     return Container(
       color: Theme.of(context).primaryColor,
@@ -125,6 +122,8 @@ class LoginScreenState extends State<LoginScreen> {
                                         padding: const EdgeInsets.only(
                                             left: 24, right: 24),
                                         child: CustomTextEnterField(
+                                          autovalidateMode: AutovalidateMode
+                                              .onUserInteraction,
                                           textEditingController:
                                               _emailController,
                                           fillColor: Theme.of(context)
@@ -155,6 +154,8 @@ class LoginScreenState extends State<LoginScreen> {
                                               CustomTextEnterField(
                                             textEditingController:
                                                 _passwordController,
+                                            autovalidateMode: AutovalidateMode
+                                                .onUserInteraction,
                                             fillColor: Theme.of(context)
                                                 .scaffoldBackgroundColor,
                                             filled: true,

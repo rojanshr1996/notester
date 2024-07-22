@@ -7,11 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_event.dart';
 import 'package:notester/bloc/authBloc/auth_state.dart';
+import 'package:notester/core/service_locator.dart';
 import 'package:notester/model/model.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
 import 'package:notester/services/auth_services.dart';
 import 'package:notester/services/cloud/cloud_note.dart';
 import 'package:notester/services/cloud/firebase_cloud_storage.dart';
+import 'package:notester/services/notester_remote_config_service.dart';
 import 'package:notester/utils/constants.dart';
 import 'package:notester/utils/dialogs/logout_dialog.dart';
 import 'package:notester/view/auth/login_screen.dart';
@@ -56,6 +58,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     final themeChange = Provider.of<DarkThemeProvider>(context);
+    final appVersion = getIt.get<NotesterPackageInfo>().versionWithoutBuild;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -265,7 +268,7 @@ class _SettingsState extends State<Settings> {
                                       "notificationSent", false);
                                   FirebaseMessaging.instance
                                       .unsubscribeFromTopic("Reminders");
-                                  if (!mounted) return;
+                                  if (!context.mounted) return;
                                   BlocProvider.of<AuthBloc>(context)
                                       .add(const AuthEventLogout());
                                 }
@@ -305,7 +308,7 @@ class _SettingsState extends State<Settings> {
                             ?.copyWith(color: Theme.of(context).hintColor),
                       ),
                       subtitle: Text(
-                        "Version 1.0.2",
+                        "Version $appVersion",
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall

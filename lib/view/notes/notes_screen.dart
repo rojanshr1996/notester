@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:notester/model/model.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
 import 'package:notester/services/auth_services.dart';
@@ -138,7 +139,7 @@ class _NotesScreenState extends State<NotesScreen> {
                                               : false,
                                       imagePath: value.darkTheme
                                           ? "assets/notesImage.png"
-                                          : "assets/notesImageLight.png"),
+                                          : "assets/notesImageLightNew.png"),
                                   expandedHeight: maxHeight -
                                       MediaQuery.of(context).padding.top,
                                   leading: StreamBuilder(
@@ -152,7 +153,7 @@ class _NotesScreenState extends State<NotesScreen> {
                                             final userData = snapshot.data
                                                 as Iterable<UserModel>;
                                             return userData.isEmpty
-                                                ? const SizedBox()
+                                                ? const SizedBox.shrink()
                                                 : Padding(
                                                     padding:
                                                         const EdgeInsets.all(8),
@@ -197,11 +198,11 @@ class _NotesScreenState extends State<NotesScreen> {
                                                             errorWidget: (context,
                                                                     url,
                                                                     error) =>
-                                                                const Icon(
+                                                                Icon(
                                                                     Icons.image,
                                                                     color: AppColors
                                                                         .cLight,
-                                                                    size: 36),
+                                                                    size: 26.h),
                                                           ),
                                                         ),
                                                       ),

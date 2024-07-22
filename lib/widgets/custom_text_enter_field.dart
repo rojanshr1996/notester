@@ -1,7 +1,7 @@
 import 'package:custom_widgets/custom_widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
 import 'package:notester/utils/app_colors.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CustomTextEnterField extends StatelessWidget {
@@ -33,7 +33,7 @@ class CustomTextEnterField extends StatelessWidget {
   final TextStyle? errorStyle;
   final TextCapitalization textCapitalization;
   final Widget? label;
-
+  final AutovalidateMode? autovalidateMode;
   const CustomTextEnterField({
     Key? key,
     this.textEditingController,
@@ -64,6 +64,7 @@ class CustomTextEnterField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.errorStyle = const TextStyle(color: CustomColor.cred),
     this.label,
+    this.autovalidateMode,
   }) : super(key: key);
 
   @override
@@ -86,6 +87,7 @@ class CustomTextEnterField extends StatelessWidget {
       onTap: onTap,
       onFieldSubmitted: onFormSubmitted,
       textCapitalization: textCapitalization,
+      autovalidateMode: autovalidateMode,
       style: style,
       decoration: InputDecoration(
         label: label,
