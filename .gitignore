@@ -9,15 +9,12 @@
 *.swp
 .DS_Store
 .atom/
+.build/
 .buildlog/
 .history
 .svn/
-*.env
+.swiftpm/
 migrate_working_dir/
-
-# Sonarqube related
-*.scannerwork
-.sonar-project.properties
 
 # IntelliJ related
 *.iml
@@ -52,6 +49,9 @@ migrate_working_dir/
 version
 analysis_benchmark.json
 
+*.g.dart
+*.freezed.dart
+
 # packages file containing multi-root paths
 .packages.generated
 
@@ -80,8 +80,9 @@ unlinked_spec.ds
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
-*.jks
-
+**/android/app/.cxx/
+#*.jks
+*.scannerwork
 # iOS/XCode related
 **/ios/**/*.mode1v3
 **/ios/**/*.mode2v3
@@ -111,6 +112,8 @@ unlinked_spec.ds
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+**ios/*.xcuserstate
+**ios/*.xcuserdata
 
 # macOS
 **/Flutter/ephemeral/
@@ -143,3 +146,31 @@ app.*.symbols
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
 !.vscode/settings.json
+
+/.env.development
+/.env.uat
+/.env.production
+/.env.qa
+/android/app/src/development/google-services.json
+/android/app/src/production/google-services.json
+/android/app/src/qa/google-services.json
+/android/app/src/uat/google-services.json
+
+# FVM Version Cache
+.fvm/
+
+# iOS Fastlane reports
+**/ios/fastlane/report.*
+
+# Android Fastlane reports
+**/android/fastlane/report.*
+
+# Ignore all Fastlane reports
+**/ios/fastlane/*.html
+**/ios/fastlane/*.json
+**/ios/fastlane/*.xml
+
+**/android/fastlane/*.html
+**/android/fastlane/*.json
+**/android/fastlane/*.xml
+.vscode/settings.json

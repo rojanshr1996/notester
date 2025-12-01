@@ -12,8 +12,7 @@ class FirebaseCloudStorage {
   final users = FirebaseFirestore.instance.collection('users');
   final storageDestination = "attachments/";
   final storageUserDestination = "users/";
-  static final FirebaseCloudStorage _shared =
-      FirebaseCloudStorage._sharedInstance();
+  static final FirebaseCloudStorage _shared = FirebaseCloudStorage._sharedInstance();
 
   FirebaseCloudStorage._sharedInstance();
   factory FirebaseCloudStorage() => _shared;
@@ -49,10 +48,7 @@ class FirebaseCloudStorage {
 
   Future<Iterable<CloudNote>> getNotes({required String ownerUserId}) async {
     try {
-      return await notes
-          .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
-          .get()
-          .then(
+      return await notes.where(ownerUserIdFieldName, isEqualTo: ownerUserId).get().then(
             (value) => value.docs.map((doc) => CloudNote.fromSnapshot(doc)),
           );
     } catch (e) {
@@ -60,22 +56,67 @@ class FirebaseCloudStorage {
     }
   }
 
-  Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) =>
-      notes.snapshots().map(
-            (event) => event.docs
-                .map((doc) => CloudNote.fromSnapshot(doc))
-                .where((note) => note.ownerUserId == ownerUserId),
-          );
+  Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) => notes.snapshots().map(
+        (event) {
+          final userNotes = event.docs
+              .map((doc) => CloudNote.fromSnapshot(doc))
+              .where((note) => note.ownerUserId == ownerUserId)
+              .toList();
 
-  Stream<Iterable<CloudNote>> allFavouriteNotes(
-          {required String ownerUserId, bool favourite = true}) =>
+          // Sort: favorites first, then by creation date (newest first)
+          userNotes.sort((a, b) {
+            // First, sort by favorite status
+            if (a.favourite == true && b.favourite != true) return -1;
+            if (a.favourite != true && b.favourite == true) return 1;
+
+            // Then sort by creation date (newest first)
+            if (a.createdDate != null &&
+                a.createdDate!.isNotEmpty &&
+                b.createdDate != null &&
+                b.createdDate!.isNotEmpty) {
+              try {
+                final dateA = DateTime.parse(a.createdDate!);
+                final dateB = DateTime.parse(b.createdDate!);
+                return dateB.compareTo(dateA);
+              } catch (e) {
+                return 0;
+              }
+            }
+            return 0;
+          });
+
+          return userNotes;
+        },
+      );
+
+  Stream<Iterable<CloudNote>> allFavouriteNotes({required String ownerUserId, bool favourite = true}) =>
       notes.snapshots().map(
-            (event) => event.docs
-                .map((doc) => CloudNote.fromSnapshot(doc))
-                .where((note) =>
-                    note.ownerUserId == ownerUserId &&
-                    note.favourite == favourite),
-          );
+        (event) {
+          final favoriteNotes = event.docs
+              .map((doc) => CloudNote.fromSnapshot(doc))
+              .where((note) => note.ownerUserId == ownerUserId && note.favourite == favourite)
+              .toList();
+
+          // Sort by creation date (newest first)
+          favoriteNotes.sort((a, b) {
+            if (a.createdDate != null &&
+                a.createdDate!.isNotEmpty &&
+                b.createdDate != null &&
+                b.createdDate!.isNotEmpty) {
+              try {
+                final dateA = DateTime.parse(a.createdDate!);
+                final dateB = DateTime.parse(b.createdDate!);
+                return dateB.compareTo(dateA);
+              } catch (e) {
+                return 0;
+              }
+            }
+            return 0;
+          });
+
+          return favoriteNotes;
+        },
+      );
 
   Future<void> updateNote({
     required String documentId,
@@ -117,8 +158,7 @@ class FirebaseCloudStorage {
   UploadTask? uploadFile(String fileName, File file, {bool fromUser = false}) {
     try {
       if (fromUser) {
-        final ref =
-            FirebaseStorage.instance.ref("$storageUserDestination$fileName");
+        final ref = FirebaseStorage.instance.ref("$storageUserDestination$fileName");
         return ref.putFile(file);
       }
       final ref = FirebaseStorage.instance.ref("$storageDestination$fileName");
@@ -148,10 +188,7 @@ class FirebaseCloudStorage {
   // User Collection
   Future<Iterable<UserModel>> getUser({required String ownerUserId}) async {
     try {
-      return await users
-          .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
-          .get()
-          .then(
+      return await users.where(ownerUserIdFieldName, isEqualTo: ownerUserId).get().then(
             (value) => value.docs.map((doc) => UserModel.fromSnapshot(doc)),
           );
     } catch (e) {
@@ -159,12 +196,9 @@ class FirebaseCloudStorage {
     }
   }
 
-  Stream<Iterable<UserModel>> userData({required String ownerUserId}) =>
-      users.snapshots().map(
-            (event) => event.docs
-                .map((doc) => UserModel.fromSnapshot(doc))
-                .where((user) => user.userId == ownerUserId),
-          );
+  Stream<Iterable<UserModel>> userData({required String ownerUserId}) => users.snapshots().map(
+        (event) => event.docs.map((doc) => UserModel.fromSnapshot(doc)).where((user) => user.userId == ownerUserId),
+      );
 
   Future<void> updateUser({
     required String documentId,

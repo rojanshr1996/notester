@@ -5,6 +5,7 @@ import 'package:custom_widgets/custom_widgets.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
 import 'package:notester/cubit/pdf_download/pdf_download_cubit.dart';
@@ -76,8 +77,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     final title = _titleController.text.trim();
     await _notesService.updateNote(
       documentId: note.documentId,
-      createdDate:
-          _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
+      createdDate: _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
       // createdDate: "${DateTime.now()}",
       text: text,
       title: title,
@@ -98,8 +98,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     final title = _titleController.text.trim();
     await _notesService.updateNote(
       documentId: note.documentId,
-      createdDate:
-          _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
+      createdDate: _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
       // createdDate: "${DateTime.now()}",
       text: text,
       title: title,
@@ -172,10 +171,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   void _deleteNoteIfTextIsEmpty() {
     final note = _note;
-    if (_textController.text.isEmpty &&
-        note != null &&
-        _imageUrl.value == "" &&
-        _fileUrl.value == "") {
+    if (_textController.text.isEmpty && note != null && _imageUrl.value == "" && _fileUrl.value == "") {
       _notesService.deleteNote(documentId: note.documentId);
     }
   }
@@ -189,8 +185,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     if (note != null && text.isNotEmpty) {
       await _notesService.updateNote(
         documentId: note.documentId,
-        createdDate:
-            _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
+        createdDate: _createdDate.value == "" ? "${DateTime.now()}" : _createdDate.value,
         // createdDate: "${DateTime.now()}",
         text: text,
         title: title,
@@ -307,15 +302,11 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                     Utilities.closeActivity(context);
                   },
                   style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all<Color>(
-                        Theme.of(context).colorScheme.primary),
+                    backgroundColor: WidgetStateProperty.all<Color>(Theme.of(context).colorScheme.primary),
                   ),
                   child: Text(
                     "Save",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: AppColors.cWhite),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: AppColors.cWhite),
                   ),
                 ),
               ),
@@ -336,18 +327,14 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 10),
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                 child: Row(
                                   children: [
                                     Expanded(
                                       child: ElevatedButton.icon(
                                         style: ButtonStyle(
                                           backgroundColor:
-                                              WidgetStateProperty.all<Color>(
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .primary),
+                                              WidgetStateProperty.all<Color>(Theme.of(context).colorScheme.primary),
                                         ),
                                         icon: const Icon(
                                           Icons.image,
@@ -363,9 +350,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium!
-                                              .copyWith(
-                                                  color: AppColors.cWhite,
-                                                  fontWeight: medium),
+                                              .copyWith(color: AppColors.cWhite, fontWeight: medium),
                                         ),
                                       ),
                                     ),
@@ -374,10 +359,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                       child: ElevatedButton.icon(
                                         style: ButtonStyle(
                                           backgroundColor:
-                                              WidgetStateProperty.all<Color>(
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .primary),
+                                              WidgetStateProperty.all<Color>(Theme.of(context).colorScheme.primary),
                                         ),
                                         icon: const Icon(
                                           Icons.file_copy,
@@ -393,9 +375,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodyMedium!
-                                              .copyWith(
-                                                  color: AppColors.cWhite,
-                                                  fontWeight: medium),
+                                              .copyWith(color: AppColors.cWhite, fontWeight: medium),
                                         ),
                                       ),
                                     ),
@@ -405,44 +385,29 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                               Expanded(
                                 child: SingleChildScrollView(
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 10),
+                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                                         child: Row(
                                           children: [
                                             ValueListenableBuilder(
                                               valueListenable: _createdDate,
-                                              builder:
-                                                  (context, createdDate, _) {
+                                              builder: (context, createdDate, _) {
                                                 return Expanded(
-                                                  child: _createdDate.value ==
-                                                          ""
+                                                  child: _createdDate.value == ""
                                                       ? const SizedBox()
                                                       : Text(
-                                                          DateFormat.yMMMMd().format(
-                                                              DateTime.parse(
-                                                                  _createdDate
-                                                                      .value)),
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .bodySmall
-                                                              ?.copyWith(
-                                                                  fontWeight:
-                                                                      medium,
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .hintColor),
+                                                          DateFormat.yMMMMd()
+                                                              .format(DateTime.parse(_createdDate.value)),
+                                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                              fontWeight: medium, color: Theme.of(context).hintColor),
                                                         ),
                                                 );
                                               },
                                             ),
                                             const Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
                                               children: [
                                                 // OutlinedButton.icon(
                                                 //   icon: Icon(
@@ -503,21 +468,17 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 16, right: 12),
+                                        padding: const EdgeInsets.only(left: 16, right: 12),
                                         child: Row(
                                           children: [
                                             Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 8),
+                                              padding: const EdgeInsets.only(right: 8),
                                               child: Container(
                                                 height: 40,
                                                 width: 40,
                                                 decoration: BoxDecoration(
                                                     shape: BoxShape.circle,
-                                                    border: Border.all(
-                                                        color:
-                                                            AppColors.cWhite),
+                                                    border: Border.all(color: AppColors.cWhite),
                                                     color: _color.value),
                                               ),
                                             ),
@@ -525,32 +486,16 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                             Expanded(
                                               child: TextField(
                                                 controller: _titleController,
-                                                keyboardType:
-                                                    TextInputType.multiline,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium
-                                                    ?.copyWith(
-                                                        fontWeight: bold),
+                                                keyboardType: TextInputType.multiline,
+                                                style:
+                                                    Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: bold),
                                                 maxLines: null,
-                                                textCapitalization:
-                                                    TextCapitalization
-                                                        .sentences,
+                                                textCapitalization: TextCapitalization.sentences,
                                                 decoration: InputDecoration(
                                                   hintText: "Enter title... ",
-                                                  hintStyle: Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium
-                                                      ?.copyWith(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .surface,
-                                                          fontWeight: medium),
-                                                  border:
-                                                      const UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide.none),
+                                                  hintStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                                      color: Theme.of(context).colorScheme.surface, fontWeight: medium),
+                                                  border: const UnderlineInputBorder(borderSide: BorderSide.none),
                                                 ),
                                               ),
                                             ),
@@ -560,13 +505,9 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                               likeBuilder: (bool isLiked) {
                                                 favourite = isLiked;
                                                 return Icon(
-                                                  isLiked
-                                                      ? Icons.star
-                                                      : Icons.star_border,
-                                                  color: isLiked
-                                                      ? Theme.of(context)
-                                                          .indicatorColor
-                                                      : AppColors.cFadedBlue,
+                                                  isLiked ? Icons.star : Icons.star_border,
+                                                  color:
+                                                      isLiked ? Theme.of(context).indicatorColor : AppColors.cFadedBlue,
                                                   size: 36,
                                                 );
                                               },
@@ -575,32 +516,21 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16),
+                                        padding: const EdgeInsets.symmetric(horizontal: 16),
                                         child: TextField(
                                           controller: _textController,
                                           keyboardType: TextInputType.multiline,
-                                          textCapitalization:
-                                              TextCapitalization.sentences,
+                                          textCapitalization: TextCapitalization.sentences,
                                           style: Theme.of(context)
                                               .textTheme
                                               .labelLarge
-                                              ?.copyWith(
-                                                  fontWeight: regular,
-                                                  height: 1.4),
+                                              ?.copyWith(fontWeight: regular, height: 1.4),
                                           maxLines: null,
                                           decoration: InputDecoration(
                                             hintText: "Enter new note... ",
-                                            hintStyle: Theme.of(context)
-                                                .textTheme
-                                                .labelLarge
-                                                ?.copyWith(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .surface,
-                                                    fontWeight: regular),
-                                            border: const UnderlineInputBorder(
-                                                borderSide: BorderSide.none),
+                                            hintStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                                color: Theme.of(context).colorScheme.surface, fontWeight: regular),
+                                            border: const UnderlineInputBorder(borderSide: BorderSide.none),
                                           ),
                                         ),
                                       ),
@@ -610,100 +540,61 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                               ),
                               // const Spacer(),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
                                     child: ValueListenableBuilder(
                                       valueListenable: _imageFile,
                                       builder: (context, imageFile, _) {
-                                        return _imageFile.value == null ||
-                                                _imageFile.value?.path == null
+                                        return _imageFile.value == null || _imageFile.value?.path == null
                                             ? ValueListenableBuilder(
                                                 valueListenable: _imageUrl,
-                                                builder:
-                                                    (context, imageUrl, _) {
+                                                builder: (context, imageUrl, _) {
                                                   return _imageUrl.value != ""
                                                       ? Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .fromLTRB(16,
-                                                                  16, 8, 16),
+                                                          padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
                                                           child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
+                                                            borderRadius: BorderRadius.circular(15),
                                                             child: Column(
                                                               children: [
                                                                 InkWell(
                                                                   onTap: () {
                                                                     Utilities.openNamedActivity(
-                                                                        context,
-                                                                        Routes
-                                                                            .enlargeImage,
+                                                                        context, Routes.enlargeImage,
                                                                         arguments:
                                                                             ImageArgs(imageUrl: _imageUrl.value));
                                                                   },
-                                                                  child:
-                                                                      Container(
+                                                                  child: Container(
                                                                     height: 140,
-                                                                    width: double
-                                                                        .maxFinite,
-                                                                    color: AppColors
-                                                                        .cWhite,
-                                                                    child:
-                                                                        CachedNetworkImage(
-                                                                      imageUrl:
-                                                                          _imageUrl
-                                                                              .value,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      memCacheHeight:
-                                                                          450,
-                                                                      errorWidget: (context,
-                                                                              url,
-                                                                              error) =>
-                                                                          Icon(
-                                                                        Icons
-                                                                            .error,
-                                                                        color: Theme.of(context)
-                                                                            .colorScheme
-                                                                            .surface,
+                                                                    width: double.maxFinite,
+                                                                    color: AppColors.cWhite,
+                                                                    child: CachedNetworkImage(
+                                                                      imageUrl: _imageUrl.value,
+                                                                      fit: BoxFit.cover,
+                                                                      memCacheHeight: 450,
+                                                                      errorWidget: (context, url, error) => Icon(
+                                                                        Icons.error,
+                                                                        color: Theme.of(context).colorScheme.surface,
                                                                       ),
                                                                     ),
                                                                   ),
                                                                 ),
                                                                 InkWell(
                                                                   onTap: () {
-                                                                    _imageFile
-                                                                            .value =
-                                                                        null;
-                                                                    if (_imageUrl
-                                                                            .value !=
-                                                                        "") {
-                                                                      _notesService
-                                                                          .deleteFile(
-                                                                              _imageUrl.value);
-                                                                      _imageUrl
-                                                                          .value = "";
+                                                                    _imageFile.value = null;
+                                                                    if (_imageUrl.value != "") {
+                                                                      _notesService.deleteFile(_imageUrl.value);
+                                                                      _imageUrl.value = "";
                                                                     }
                                                                   },
-                                                                  child:
-                                                                      Container(
+                                                                  child: Container(
                                                                     height: 42,
-                                                                    width: double
-                                                                        .maxFinite,
-                                                                    color: AppColors
-                                                                        .cRedAccent,
-                                                                    child:
-                                                                        const Center(
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .close,
-                                                                        color: AppColors
-                                                                            .cWhite,
+                                                                    width: double.maxFinite,
+                                                                    color: AppColors.cRedAccent,
+                                                                    child: const Center(
+                                                                      child: Icon(
+                                                                        Icons.close,
+                                                                        color: AppColors.cWhite,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -716,57 +607,42 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                                 },
                                               )
                                             : Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        16, 16, 8, 16),
+                                                padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
                                                 child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
+                                                  borderRadius: BorderRadius.circular(15),
                                                   child: Column(
                                                     children: [
                                                       Container(
                                                         height: 140,
                                                         width: double.maxFinite,
                                                         color: AppColors.cWhite,
-                                                        child: Image.file(
-                                                            _imageFile.value!,
-                                                            fit: BoxFit.cover,
-                                                            cacheHeight: 500),
+                                                        child: Image.file(_imageFile.value!,
+                                                            fit: BoxFit.cover, cacheHeight: 500),
                                                       ),
                                                       ValueListenableBuilder(
                                                         valueListenable: _task,
-                                                        builder:
-                                                            (context, task, _) {
+                                                        builder: (context, task, _) {
                                                           return task != null
-                                                              ? buildUploadStatus(
-                                                                  _task.value!)
+                                                              ? buildUploadStatus(_task.value!)
                                                               : const SizedBox();
                                                         },
                                                       ),
                                                       InkWell(
                                                         onTap: () {
-                                                          _imageFile.value =
-                                                              null;
-                                                          if (_imageUrl.value !=
-                                                              "") {
-                                                            _notesService
-                                                                .deleteFile(
-                                                                    _imageUrl
-                                                                        .value);
-                                                            _imageUrl.value =
-                                                                "";
+                                                          _imageFile.value = null;
+                                                          if (_imageUrl.value != "") {
+                                                            _notesService.deleteFile(_imageUrl.value);
+                                                            _imageUrl.value = "";
                                                           }
                                                         },
                                                         child: Container(
                                                           height: 42,
                                                           width: 200,
-                                                          color: AppColors
-                                                              .cRedAccent,
+                                                          color: AppColors.cRedAccent,
                                                           child: const Center(
                                                             child: Icon(
                                                               Icons.close,
-                                                              color: AppColors
-                                                                  .cWhite,
+                                                              color: AppColors.cWhite,
                                                             ),
                                                           ),
                                                         ),
@@ -782,69 +658,50 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                     child: ValueListenableBuilder(
                                       valueListenable: _file,
                                       builder: (context, fileUrl, _) {
-                                        return _file.value == null ||
-                                                _file.value?.path == null
+                                        return _file.value == null || _file.value?.path == null
                                             ? ValueListenableBuilder(
                                                 valueListenable: _fileUrl,
                                                 builder: (context, fileUrl, _) {
                                                   return _fileUrl.value != ""
                                                       ? Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .fromLTRB(8,
-                                                                  16, 16, 16),
+                                                          padding: const EdgeInsets.fromLTRB(8, 16, 16, 16),
                                                           child: ClipRRect(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
+                                                            borderRadius: BorderRadius.circular(15),
                                                             child: Column(
                                                               children: [
                                                                 InkWell(
                                                                   onTap: () {
-                                                                    Utilities.openNamedActivity(
-                                                                        context,
-                                                                        Routes
-                                                                            .pdfView,
+                                                                    Utilities.openNamedActivity(context, Routes.pdfView,
                                                                         arguments: Args(
-                                                                            fileUrl:
-                                                                                _fileUrl.value,
+                                                                            fileUrl: _fileUrl.value,
                                                                             fileName: widget.note!.fileName ?? ""));
                                                                   },
-                                                                  child:
-                                                                      Container(
+                                                                  child: Container(
                                                                     height: 140,
-                                                                    width: double
-                                                                        .maxFinite,
-                                                                    color: AppColors
-                                                                        .cWhite,
-                                                                    child:
-                                                                        Center(
-                                                                      child:
-                                                                          Column(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.center,
+                                                                    width: double.maxFinite,
+                                                                    color: AppColors.cWhite,
+                                                                    child: Center(
+                                                                      child: Column(
+                                                                        mainAxisAlignment: MainAxisAlignment.center,
                                                                         children: [
                                                                           Icon(
-                                                                              path.extension(widget.note!.fileName!) == ".pdf"
+                                                                              path.extension(widget.note!.fileName!) ==
+                                                                                      ".pdf"
                                                                                   ? Icons.picture_as_pdf
-                                                                                  : path.extension(widget.note!.fileName!) == ".pptx"
+                                                                                  : path.extension(
+                                                                                              widget.note!.fileName!) ==
+                                                                                          ".pptx"
                                                                                       ? Icons.present_to_all
                                                                                       : Icons.file_copy,
                                                                               size: 48,
                                                                               color: AppColors.cDarkBlue),
-                                                                          const SizedBox(
-                                                                              height: 10),
+                                                                          const SizedBox(height: 10),
                                                                           Text(
                                                                             "${widget.note?.fileName}",
-                                                                            textAlign:
-                                                                                TextAlign.center,
-                                                                            maxLines:
-                                                                                2,
-                                                                            style:
-                                                                                CustomTextStyle.smallText,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
+                                                                            textAlign: TextAlign.center,
+                                                                            maxLines: 2,
+                                                                            style: CustomTextStyle.smallText,
+                                                                            overflow: TextOverflow.ellipsis,
                                                                           ),
                                                                         ],
                                                                       ),
@@ -853,34 +710,21 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                                                 ),
                                                                 InkWell(
                                                                   onTap: () {
-                                                                    _file.value =
-                                                                        null;
-                                                                    if (_fileUrl
-                                                                            .value !=
-                                                                        "") {
-                                                                      _notesService
-                                                                          .deleteFile(
-                                                                              _fileUrl.value);
-                                                                      _fileUrl.value =
-                                                                          "";
-                                                                      _fileName
-                                                                          .value = "";
+                                                                    _file.value = null;
+                                                                    if (_fileUrl.value != "") {
+                                                                      _notesService.deleteFile(_fileUrl.value);
+                                                                      _fileUrl.value = "";
+                                                                      _fileName.value = "";
                                                                     }
                                                                   },
-                                                                  child:
-                                                                      Container(
+                                                                  child: Container(
                                                                     height: 42,
                                                                     width: 200,
-                                                                    color: AppColors
-                                                                        .cRedAccent,
-                                                                    child:
-                                                                        const Center(
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .close,
-                                                                        color: AppColors
-                                                                            .cWhite,
+                                                                    color: AppColors.cRedAccent,
+                                                                    child: const Center(
+                                                                      child: Icon(
+                                                                        Icons.close,
+                                                                        color: AppColors.cWhite,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -893,12 +737,9 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                                 },
                                               )
                                             : Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        8, 16, 16, 16),
+                                                padding: const EdgeInsets.fromLTRB(8, 16, 16, 16),
                                                 child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
+                                                  borderRadius: BorderRadius.circular(15),
                                                   child: Column(
                                                     children: [
                                                       Container(
@@ -906,82 +747,50 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                                         width: double.maxFinite,
                                                         color: AppColors.cWhite,
                                                         child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
+                                                          mainAxisAlignment: MainAxisAlignment.center,
                                                           children: [
                                                             Icon(
-                                                                path.extension(_file
-                                                                            .value!
-                                                                            .path) ==
-                                                                        ".pdf"
-                                                                    ? Icons
-                                                                        .picture_as_pdf
-                                                                    : path.extension(_file.value!.path) ==
-                                                                            ".pptx"
-                                                                        ? Icons
-                                                                            .present_to_all
-                                                                        : Icons
-                                                                            .file_copy,
+                                                                path.extension(_file.value!.path) == ".pdf"
+                                                                    ? Icons.picture_as_pdf
+                                                                    : path.extension(_file.value!.path) == ".pptx"
+                                                                        ? Icons.present_to_all
+                                                                        : Icons.file_copy,
                                                                 size: 48,
-                                                                color: AppColors
-                                                                    .cDarkBlue),
-                                                            const SizedBox(
-                                                                height: 10),
+                                                                color: AppColors.cDarkBlue),
+                                                            const SizedBox(height: 10),
                                                             Text(
-                                                              _file.value!.path
-                                                                  .split("/")
-                                                                  .last,
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                              _file.value!.path.split("/").last,
+                                                              textAlign: TextAlign.center,
                                                               maxLines: 2,
-                                                              style:
-                                                                  CustomTextStyle
-                                                                      .smallText,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                              style: CustomTextStyle.smallText,
+                                                              overflow: TextOverflow.ellipsis,
                                                             )
                                                           ],
                                                         ),
                                                       ),
                                                       ValueListenableBuilder(
-                                                        valueListenable:
-                                                            _taskFile,
-                                                        builder:
-                                                            (context, task, _) {
+                                                        valueListenable: _taskFile,
+                                                        builder: (context, task, _) {
                                                           return task != null
-                                                              ? buildFileUploadStatus(
-                                                                  _taskFile
-                                                                      .value!)
+                                                              ? buildFileUploadStatus(_taskFile.value!)
                                                               : const SizedBox();
                                                         },
                                                       ),
                                                       InkWell(
                                                         onTap: () {
                                                           _file.value = null;
-                                                          if (_fileUrl.value !=
-                                                              "") {
-                                                            _notesService
-                                                                .deleteFile(
-                                                                    _fileUrl
-                                                                        .value);
+                                                          if (_fileUrl.value != "") {
+                                                            _notesService.deleteFile(_fileUrl.value);
                                                             _fileUrl.value = "";
-                                                            _fileName.value =
-                                                                "";
+                                                            _fileName.value = "";
                                                           }
                                                         },
                                                         child: Container(
                                                           height: 42,
                                                           width: 200,
-                                                          color: AppColors
-                                                              .cRedAccent,
+                                                          color: AppColors.cRedAccent,
                                                           child: const Center(
-                                                            child: Icon(
-                                                                Icons.close,
-                                                                color: AppColors
-                                                                    .cWhite),
+                                                            child: Icon(Icons.close, color: AppColors.cWhite),
                                                           ),
                                                         ),
                                                       ),
@@ -995,10 +804,9 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                                 ],
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 0, 0, 16),
+                                padding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
                                 child: SizedBox(
-                                  height: 50,
+                                  height: 100.h,
                                   child: ColorSlider(
                                     noteColor: _color.value,
                                     callBackColorTapped: (color) {
@@ -1065,8 +873,7 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   Future uploadFile() async {
     if (_file.value == null) return;
     final fileName = basename(_file.value!.path);
-    _taskFile.value =
-        _notesService.uploadFile("$fileName${DateTime.now()}", _file.value!);
+    _taskFile.value = _notesService.uploadFile("$fileName${DateTime.now()}", _file.value!);
 
     if (_taskFile.value == null) return;
     final snapshot = await _taskFile.value!.whenComplete(() {});
