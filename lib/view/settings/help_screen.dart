@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:custom_widgets/custom_widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:notester/utils/app_colors.dart';
 import 'package:notester/utils/constants.dart';
 import 'package:notester/utils/custom_text_style.dart';
 import 'package:notester/widgets/custom_text_enter_field.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 class HelpScreen extends StatefulWidget {
-  const HelpScreen({Key? key}) : super(key: key);
+  const HelpScreen({super.key});
 
   @override
   HelpScreenState createState() => HelpScreenState();
@@ -124,8 +124,7 @@ class HelpScreenState extends State<HelpScreen> {
                   child: CustomButton(
                     title: "SUBMIT",
                     borderRadius: BorderRadius.circular(5),
-                    buttonColor:
-                        Theme.of(context).buttonTheme.colorScheme?.primary,
+                    buttonColor: Theme.of(context).colorScheme.primary,
                     onPressed: () {
                       if (_helpController.text.isNotEmpty) {
                         send();

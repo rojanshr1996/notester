@@ -102,7 +102,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 2),
-                            child: LogoWidget(height: 50.h),
+                            child: LogoWidget(
+                              height: 50.h,
+                              path: 'assets/notesterIcon.png',
+                            ),
                           ),
                         ),
                       ),

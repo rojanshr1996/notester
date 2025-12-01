@@ -15,7 +15,7 @@ import 'package:notester/widgets/logo_widget.dart';
 import 'package:notester/widgets/safe_area_header.dart';
 
 class ForgotPasswordView extends StatefulWidget {
-  const ForgotPasswordView({Key? key}) : super(key: key);
+  const ForgotPasswordView({super.key});
 
   @override
   _ForgotPasswordViewState createState() => _ForgotPasswordViewState();
@@ -87,7 +87,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                           child: const Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 8),
-                            child: LogoWidget(height: 28),
+                            child: LogoWidget(
+                              height: 28,
+                              path: 'assets/notesterIcon.png',
+                            ),
                           ),
                         ),
                       ),

@@ -170,4 +170,10 @@ class Utils {
         ? false
         : version1.compareTo(version2) > 0;
   }
+
+  static void removeFocus(BuildContext context) {
+    if (context.mounted) {
+      FocusScope.of(context).unfocus();
+    }
+  }
 }

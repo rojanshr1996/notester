@@ -17,3 +17,7 @@ const createdDateFieldName = "created_date";
 const updatedDateFieldName = "updated_date";
 const addressFieldName = "address";
 const phoneFieldName = "phone_number";
+
+// Checklist field names
+const checklistTitleFieldName = "title";
+const checklistItemsFieldName = "items";

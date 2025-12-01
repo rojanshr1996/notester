@@ -211,10 +211,8 @@ class LoginScreenState extends State<LoginScreen> {
                                     borderRadius: BorderRadius.circular(10),
                                     splashBorderRadius:
                                         BorderRadius.circular(10),
-                                    buttonColor: Theme.of(context)
-                                        .buttonTheme
-                                        .colorScheme
-                                        ?.primary,
+                                    buttonColor:
+                                        Theme.of(context).colorScheme.secondary,
                                     onPressed: () =>
                                         _authenticateWithEmailAndPassword(
                                             context),

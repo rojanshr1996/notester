@@ -10,6 +10,7 @@ class Routes {
   static const String notes = '/notes';
   static const String notesImage = '/notes/image';
   static const String createUpdateNote = '/notes/new-note';
+  static const String checklists = '/checklists';
   static const String settings = '/settings';
   static const String verifyEmail = '/verifyEmail';
   static const String forgotPassword = '/forgotPassword';

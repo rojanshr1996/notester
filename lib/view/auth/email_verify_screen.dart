@@ -10,7 +10,7 @@ import 'package:notester/utils/constants.dart';
 import 'package:notester/view/auth/login_screen.dart';
 
 class EmailVerifyScreen extends StatelessWidget {
-  const EmailVerifyScreen({Key? key}) : super(key: key);
+  const EmailVerifyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +125,7 @@ class IndexButtons extends StatelessWidget {
   final String imagePath;
 
   const IndexButtons({
-    Key? key,
+    super.key,
     required this.title,
     this.buttonColor,
     this.onPressed,
@@ -137,7 +137,7 @@ class IndexButtons extends StatelessWidget {
     this.elevation = 2.0,
     this.shadowColor,
     this.imagePath = "assets/notesImage.png",
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
