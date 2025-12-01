@@ -1,2 +1,0 @@
-/Users/rojanshrestha/Documents/rojan/personalProjects/notester/android/app/.cxx/Debug/54223h52/x86/CMakeFiles/edit_cache.dir
-/Users/rojanshrestha/Documents/rojan/personalProjects/notester/android/app/.cxx/Debug/54223h52/x86/CMakeFiles/rebuild_cache.dir
