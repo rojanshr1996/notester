@@ -4,8 +4,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
+import 'package:notester/cubit/pdf_download/pdf_download_cubit.dart';
+import 'package:notester/cubit/pdf_download/pdf_download_state.dart';
 import 'package:notester/model/model.dart';
 import 'package:notester/services/auth_services.dart';
 import 'package:notester/services/cloud/cloud_note.dart';
@@ -21,7 +25,7 @@ import 'package:path/path.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {
   final CloudNote? note;
-  const CreateUpdateNoteView({Key? key, this.note}) : super(key: key);
+  const CreateUpdateNoteView({super.key, this.note});
 
   @override
   CreateUpdateNoteViewState createState() => CreateUpdateNoteViewState();
@@ -249,719 +253,802 @@ class CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   @override
   Widget build(BuildContext context) {
-    return RemoveFocus(
-      child: Scaffold(
-        appBar: AppBar(
-          shadowColor: Theme.of(context).colorScheme.shadow,
-          backgroundColor: Theme.of(context).primaryColor,
-          elevation: 2,
-          title: const Text("Add note"),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ElevatedButton(
+    return BlocListener<PdfDownloadCubit, PdfDownloadState>(
+      listener: (context, state) {
+        if (state is PdfDownloadLoading) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Generating PDF...'),
+              backgroundColor: Theme.of(context).primaryColor,
+            ),
+          );
+        } else if (state is PdfDownloadSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'PDF saved to: ${state.filePath}',
+                style: const TextStyle(color: AppColors.cWhite),
+              ),
+              duration: const Duration(seconds: 3),
+              action: SnackBarAction(
+                label: 'OK',
+                onPressed: () {},
+              ),
+              backgroundColor: AppColors.cGreen,
+            ),
+          );
+        } else if (state is PdfDownloadError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: RemoveFocus(
+        child: Scaffold(
+          appBar: AppBar(
+            // shadowColor: Theme.of(context).colorScheme.shadow,
+            // backgroundColor: Theme.of(context).colorScheme.onPrimary,
+            // elevation: 2,
+            title: const Text("Add note"),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.download),
                 onPressed: () {
-                  Utilities.closeActivity(context);
+                  _downloadNoteAsPdf(context);
                 },
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all<Color>(
-                      Theme.of(context).scaffoldBackgroundColor),
-                ),
-                child: Text(
-                  "Save",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.surface),
+                tooltip: 'Download as PDF',
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Utilities.closeActivity(context);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all<Color>(
+                        Theme.of(context).colorScheme.primary),
+                  ),
+                  child: Text(
+                    "Save",
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: AppColors.cWhite),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        body: FutureBuilder(
-          future: createOrGetExistingNote(context),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                _setupTextControllerListener();
-                return ValueListenableBuilder(
-                  valueListenable: _color,
-                  builder: (context, color, _) {
-                    return Stack(
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: OutlinedButton.icon(
-                                      icon: Icon(
-                                        Icons.image,
-                                        size: 18,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                      ),
-                                      onPressed: () {
-                                        FocusScope.of(context).unfocus();
-                                        addImage(context);
-                                      },
-                                      label: Text(
-                                        "Add Image",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .surface,
-                                                fontWeight: medium),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 15),
-                                  Expanded(
-                                    child: OutlinedButton.icon(
-                                      icon: Icon(
-                                        Icons.file_copy,
-                                        size: 18,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                      ),
-                                      onPressed: () {
-                                        FocusScope.of(context).unfocus();
-                                        addFile(context);
-                                      },
-                                      label: Text(
-                                        "Add File",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .surface,
-                                                fontWeight: medium),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+            ],
+          ),
+          body: FutureBuilder(
+            future: createOrGetExistingNote(context),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.done:
+                  _setupTextControllerListener();
+                  return ValueListenableBuilder(
+                    valueListenable: _color,
+                    builder: (context, color, _) {
+                      return Stack(
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                child: Row(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          ValueListenableBuilder(
-                                            valueListenable: _createdDate,
-                                            builder: (context, createdDate, _) {
-                                              return Expanded(
-                                                child: _createdDate.value == ""
-                                                    ? const SizedBox()
-                                                    : Text(
-                                                        DateFormat.yMMMMd()
-                                                            .format(
-                                                                DateTime.parse(
-                                                                    _createdDate
-                                                                        .value)),
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodySmall
-                                                            ?.copyWith(
-                                                                fontWeight:
-                                                                    medium,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .hintColor),
-                                                      ),
-                                              );
-                                            },
-                                          ),
-                                          const Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              // OutlinedButton.icon(
-                                              //   icon: Icon(
-                                              //     Icons.access_time,
-                                              //     size: 16,
-                                              //     color: Theme.of(context).colorScheme.surface,
-                                              //   ),
-                                              //   onPressed: () {
-                                              //     date_time_picker.DatePicker.showDateTimePicker(
-                                              //       context,
-                                              //       showTitleActions: true,
-                                              //       minTime: DateTime.now(),
-                                              //       currentTime: DateTime.now(),
-                                              //       maxTime: DateTime(2200, 1, 1),
-                                              //       onConfirm: (date) {
-                                              //         _reminder.value = date.toString();
-                                              //       },
-                                              //       locale: date_time_picker.LocaleType.en,
-                                              //     );
-                                              //   },
-                                              //   label: Text(
-                                              //     "Reminder",
-                                              //     style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                                              //         color: Theme.of(context).colorScheme.surface, fontWeight: medium),
-                                              //   ),
-                                              // ),
-                                              // ValueListenableBuilder(
-                                              //   valueListenable: _reminder,
-                                              //   builder: (context, reminder, _) {
-                                              //     return Row(
-                                              //       children: [
-                                              //         _reminder.value == ""
-                                              //             ? const SizedBox()
-                                              //             : InkWell(
-                                              //                 onTap: () {
-                                              //                   _reminder.value = "";
-                                              //                 },
-                                              //                 child: const Icon(Icons.close,
-                                              //                     size: 14, color: AppColors.cRed),
-                                              //               ),
-                                              //         const SizedBox(width: 8),
-                                              //         Text(
-                                              //           _reminder.value == ""
-                                              //               ? ""
-                                              //               : "${DateFormat.yMMMMd().format(DateTime.parse(_reminder.value))}, ${DateFormat.jm().format(DateTime.parse(_reminder.value))}",
-                                              //           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                              //               fontWeight: medium,
-                                              //               fontSize: 10,
-                                              //               color: Theme.of(context).hintColor),
-                                              //         ),
-                                              //       ],
-                                              //     );
-                                              //   },
-                                              // ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16, right: 12),
-                                      child: Row(
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 8),
-                                            child: Container(
-                                              height: 40,
-                                              width: 40,
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                      color: AppColors.cWhite),
-                                                  color: _color.value),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: TextField(
-                                              controller: _titleController,
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium
-                                                  ?.copyWith(fontWeight: bold),
-                                              maxLines: null,
-                                              textCapitalization:
-                                                  TextCapitalization.sentences,
-                                              decoration: InputDecoration(
-                                                hintText: "Enter title... ",
-                                                hintStyle: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium
-                                                    ?.copyWith(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .surface,
-                                                        fontWeight: medium),
-                                                border:
-                                                    const UnderlineInputBorder(
-                                                        borderSide:
-                                                            BorderSide.none),
-                                              ),
-                                            ),
-                                          ),
-                                          LikeButton(
-                                            size: 36,
-                                            isLiked: favourite,
-                                            likeBuilder: (bool isLiked) {
-                                              favourite = isLiked;
-                                              return Icon(
-                                                isLiked
-                                                    ? Icons.star
-                                                    : Icons.star_border,
-                                                color: isLiked
-                                                    ? Theme.of(context)
-                                                        .indicatorColor
-                                                    : AppColors.cFadedBlue,
-                                                size: 36,
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16),
-                                      child: TextField(
-                                        controller: _textController,
-                                        keyboardType: TextInputType.multiline,
-                                        textCapitalization:
-                                            TextCapitalization.sentences,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelLarge
-                                            ?.copyWith(
-                                                fontWeight: regular,
-                                                height: 1.4),
-                                        maxLines: null,
-                                        decoration: InputDecoration(
-                                          hintText: "Enter new note... ",
-                                          hintStyle: Theme.of(context)
-                                              .textTheme
-                                              .labelLarge
-                                              ?.copyWith(
-                                                  color: Theme.of(context)
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              WidgetStateProperty.all<Color>(
+                                                  Theme.of(context)
                                                       .colorScheme
-                                                      .surface,
-                                                  fontWeight: regular),
-                                          border: const UnderlineInputBorder(
-                                              borderSide: BorderSide.none),
+                                                      .primary),
+                                        ),
+                                        icon: const Icon(
+                                          Icons.image,
+                                          size: 18,
+                                          color: AppColors.cWhite,
+                                        ),
+                                        onPressed: () {
+                                          FocusScope.of(context).unfocus();
+                                          addImage(context);
+                                        },
+                                        label: Text(
+                                          "Add Image",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                  color: AppColors.cWhite,
+                                                  fontWeight: medium),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    Expanded(
+                                      child: ElevatedButton.icon(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              WidgetStateProperty.all<Color>(
+                                                  Theme.of(context)
+                                                      .colorScheme
+                                                      .primary),
+                                        ),
+                                        icon: const Icon(
+                                          Icons.file_copy,
+                                          size: 18,
+                                          color: AppColors.cWhite,
+                                        ),
+                                        onPressed: () {
+                                          FocusScope.of(context).unfocus();
+                                          addFile(context);
+                                        },
+                                        label: Text(
+                                          "Add File",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                  color: AppColors.cWhite,
+                                                  fontWeight: medium),
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                            // const Spacer(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: ValueListenableBuilder(
-                                    valueListenable: _imageFile,
-                                    builder: (context, imageFile, _) {
-                                      return _imageFile.value == null ||
-                                              _imageFile.value?.path == null
-                                          ? ValueListenableBuilder(
-                                              valueListenable: _imageUrl,
-                                              builder: (context, imageUrl, _) {
-                                                return _imageUrl.value != ""
-                                                    ? Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .fromLTRB(
-                                                                16, 16, 8, 16),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          child: Column(
-                                                            children: [
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  Utilities.openNamedActivity(
-                                                                      context,
-                                                                      Routes
-                                                                          .enlargeImage,
-                                                                      arguments:
-                                                                          ImageArgs(
-                                                                              imageUrl: _imageUrl.value));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 140,
-                                                                  width: double
-                                                                      .maxFinite,
-                                                                  color: AppColors
-                                                                      .cWhite,
-                                                                  child:
-                                                                      CachedNetworkImage(
-                                                                    imageUrl:
-                                                                        _imageUrl
-                                                                            .value,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    memCacheHeight:
-                                                                        450,
-                                                                    errorWidget: (context,
-                                                                            url,
-                                                                            error) =>
-                                                                        Icon(
-                                                                      Icons
-                                                                          .error,
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .colorScheme
-                                                                          .surface,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  _imageFile
-                                                                          .value =
-                                                                      null;
-                                                                  if (_imageUrl
-                                                                          .value !=
-                                                                      "") {
-                                                                    _notesService
-                                                                        .deleteFile(
-                                                                            _imageUrl.value);
-                                                                    _imageUrl
-                                                                        .value = "";
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 42,
-                                                                  width: double
-                                                                      .maxFinite,
-                                                                  color: AppColors
-                                                                      .cRedAccent,
-                                                                  child:
-                                                                      const Center(
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .close,
-                                                                      color: AppColors
-                                                                          .cWhite,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 10),
+                                        child: Row(
+                                          children: [
+                                            ValueListenableBuilder(
+                                              valueListenable: _createdDate,
+                                              builder:
+                                                  (context, createdDate, _) {
+                                                return Expanded(
+                                                  child: _createdDate.value ==
+                                                          ""
+                                                      ? const SizedBox()
+                                                      : Text(
+                                                          DateFormat.yMMMMd().format(
+                                                              DateTime.parse(
+                                                                  _createdDate
+                                                                      .value)),
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodySmall
+                                                              ?.copyWith(
+                                                                  fontWeight:
+                                                                      medium,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .hintColor),
                                                         ),
-                                                      )
-                                                    : const SizedBox();
+                                                );
                                               },
-                                            )
-                                          : Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      16, 16, 8, 16),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                child: Column(
-                                                  children: [
-                                                    Container(
-                                                      height: 140,
-                                                      width: double.maxFinite,
-                                                      color: AppColors.cWhite,
-                                                      child: Image.file(
-                                                          _imageFile.value!,
-                                                          fit: BoxFit.cover,
-                                                          cacheHeight: 500),
-                                                    ),
-                                                    ValueListenableBuilder(
-                                                      valueListenable: _task,
-                                                      builder:
-                                                          (context, task, _) {
-                                                        return task != null
-                                                            ? buildUploadStatus(
-                                                                _task.value!)
-                                                            : const SizedBox();
-                                                      },
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        _imageFile.value = null;
-                                                        if (_imageUrl.value !=
-                                                            "") {
-                                                          _notesService
-                                                              .deleteFile(
-                                                                  _imageUrl
-                                                                      .value);
-                                                          _imageUrl.value = "";
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        height: 42,
-                                                        width: 200,
-                                                        color: AppColors
-                                                            .cRedAccent,
-                                                        child: const Center(
-                                                          child: Icon(
-                                                            Icons.close,
-                                                            color: AppColors
-                                                                .cWhite,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                            ),
+                                            const Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                // OutlinedButton.icon(
+                                                //   icon: Icon(
+                                                //     Icons.access_time,
+                                                //     size: 16,
+                                                //     color: Theme.of(context).colorScheme.surface,
+                                                //   ),
+                                                //   onPressed: () {
+                                                //     date_time_picker.DatePicker.showDateTimePicker(
+                                                //       context,
+                                                //       showTitleActions: true,
+                                                //       minTime: DateTime.now(),
+                                                //       currentTime: DateTime.now(),
+                                                //       maxTime: DateTime(2200, 1, 1),
+                                                //       onConfirm: (date) {
+                                                //         _reminder.value = date.toString();
+                                                //       },
+                                                //       locale: date_time_picker.LocaleType.en,
+                                                //     );
+                                                //   },
+                                                //   label: Text(
+                                                //     "Reminder",
+                                                //     style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                                                //         color: Theme.of(context).colorScheme.surface, fontWeight: medium),
+                                                //   ),
+                                                // ),
+                                                // ValueListenableBuilder(
+                                                //   valueListenable: _reminder,
+                                                //   builder: (context, reminder, _) {
+                                                //     return Row(
+                                                //       children: [
+                                                //         _reminder.value == ""
+                                                //             ? const SizedBox()
+                                                //             : InkWell(
+                                                //                 onTap: () {
+                                                //                   _reminder.value = "";
+                                                //                 },
+                                                //                 child: const Icon(Icons.close,
+                                                //                     size: 14, color: AppColors.cRed),
+                                                //               ),
+                                                //         const SizedBox(width: 8),
+                                                //         Text(
+                                                //           _reminder.value == ""
+                                                //               ? ""
+                                                //               : "${DateFormat.yMMMMd().format(DateTime.parse(_reminder.value))}, ${DateFormat.jm().format(DateTime.parse(_reminder.value))}",
+                                                //           style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                //               fontWeight: medium,
+                                                //               fontSize: 10,
+                                                //               color: Theme.of(context).hintColor),
+                                                //         ),
+                                                //       ],
+                                                //     );
+                                                //   },
+                                                // ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 16, right: 12),
+                                        child: Row(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 8),
+                                              child: Container(
+                                                height: 40,
+                                                width: 40,
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                        color:
+                                                            AppColors.cWhite),
+                                                    color: _color.value),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: TextField(
+                                                controller: _titleController,
+                                                keyboardType:
+                                                    TextInputType.multiline,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                        fontWeight: bold),
+                                                maxLines: null,
+                                                textCapitalization:
+                                                    TextCapitalization
+                                                        .sentences,
+                                                decoration: InputDecoration(
+                                                  hintText: "Enter title... ",
+                                                  hintStyle: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium
+                                                      ?.copyWith(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .surface,
+                                                          fontWeight: medium),
+                                                  border:
+                                                      const UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide.none),
                                                 ),
                                               ),
-                                            );
-                                    },
-                                  ),
-                                ),
-                                Expanded(
-                                  child: ValueListenableBuilder(
-                                    valueListenable: _file,
-                                    builder: (context, fileUrl, _) {
-                                      return _file.value == null ||
-                                              _file.value?.path == null
-                                          ? ValueListenableBuilder(
-                                              valueListenable: _fileUrl,
-                                              builder: (context, fileUrl, _) {
-                                                return _fileUrl.value != ""
-                                                    ? Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .fromLTRB(
-                                                                8, 16, 16, 16),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          child: Column(
-                                                            children: [
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  Utilities.openNamedActivity(
-                                                                      context,
-                                                                      Routes
-                                                                          .pdfView,
-                                                                      arguments: Args(
-                                                                          fileUrl: _fileUrl
-                                                                              .value,
-                                                                          fileName:
-                                                                              widget.note!.fileName ?? ""));
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 140,
-                                                                  width: double
-                                                                      .maxFinite,
-                                                                  color: AppColors
-                                                                      .cWhite,
-                                                                  child: Center(
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        Icon(
-                                                                            path.extension(widget.note!.fileName!) == ".pdf"
-                                                                                ? Icons.picture_as_pdf
-                                                                                : path.extension(widget.note!.fileName!) == ".pptx"
-                                                                                    ? Icons.present_to_all
-                                                                                    : Icons.file_copy,
-                                                                            size: 48,
-                                                                            color: AppColors.cDarkBlue),
-                                                                        const SizedBox(
-                                                                            height:
-                                                                                10),
-                                                                        Text(
-                                                                          "${widget.note?.fileName}",
-                                                                          textAlign:
-                                                                              TextAlign.center,
-                                                                          maxLines:
-                                                                              2,
-                                                                          style:
-                                                                              CustomTextStyle.smallText,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  _file.value =
-                                                                      null;
-                                                                  if (_fileUrl
-                                                                          .value !=
-                                                                      "") {
-                                                                    _notesService
-                                                                        .deleteFile(
-                                                                            _fileUrl.value);
-                                                                    _fileUrl.value =
-                                                                        "";
-                                                                    _fileName
-                                                                        .value = "";
-                                                                  }
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  height: 42,
-                                                                  width: 200,
-                                                                  color: AppColors
-                                                                      .cRedAccent,
-                                                                  child:
-                                                                      const Center(
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .close,
-                                                                      color: AppColors
-                                                                          .cWhite,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      )
-                                                    : const SizedBox();
+                                            ),
+                                            LikeButton(
+                                              size: 36,
+                                              isLiked: favourite,
+                                              likeBuilder: (bool isLiked) {
+                                                favourite = isLiked;
+                                                return Icon(
+                                                  isLiked
+                                                      ? Icons.star
+                                                      : Icons.star_border,
+                                                  color: isLiked
+                                                      ? Theme.of(context)
+                                                          .indicatorColor
+                                                      : AppColors.cFadedBlue,
+                                                  size: 36,
+                                                );
                                               },
-                                            )
-                                          : Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      8, 16, 16, 16),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                child: Column(
-                                                  children: [
-                                                    Container(
-                                                      height: 140,
-                                                      width: double.maxFinite,
-                                                      color: AppColors.cWhite,
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Icon(
-                                                              path.extension(_file
-                                                                          .value!
-                                                                          .path) ==
-                                                                      ".pdf"
-                                                                  ? Icons
-                                                                      .picture_as_pdf
-                                                                  : path.extension(_file
-                                                                              .value!
-                                                                              .path) ==
-                                                                          ".pptx"
-                                                                      ? Icons
-                                                                          .present_to_all
-                                                                      : Icons
-                                                                          .file_copy,
-                                                              size: 48,
-                                                              color: AppColors
-                                                                  .cDarkBlue),
-                                                          const SizedBox(
-                                                              height: 10),
-                                                          Text(
-                                                            _file.value!.path
-                                                                .split("/")
-                                                                .last,
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                            maxLines: 2,
-                                                            style:
-                                                                CustomTextStyle
-                                                                    .smallText,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    ValueListenableBuilder(
-                                                      valueListenable:
-                                                          _taskFile,
-                                                      builder:
-                                                          (context, task, _) {
-                                                        return task != null
-                                                            ? buildFileUploadStatus(
-                                                                _taskFile
-                                                                    .value!)
-                                                            : const SizedBox();
-                                                      },
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        _file.value = null;
-                                                        if (_fileUrl.value !=
-                                                            "") {
-                                                          _notesService
-                                                              .deleteFile(
-                                                                  _fileUrl
-                                                                      .value);
-                                                          _fileUrl.value = "";
-                                                          _fileName.value = "";
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        height: 42,
-                                                        width: 200,
-                                                        color: AppColors
-                                                            .cRedAccent,
-                                                        child: const Center(
-                                                          child: Icon(
-                                                              Icons.close,
-                                                              color: AppColors
-                                                                  .cWhite),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                    },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: TextField(
+                                          controller: _textController,
+                                          keyboardType: TextInputType.multiline,
+                                          textCapitalization:
+                                              TextCapitalization.sentences,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelLarge
+                                              ?.copyWith(
+                                                  fontWeight: regular,
+                                                  height: 1.4),
+                                          maxLines: null,
+                                          decoration: InputDecoration(
+                                            hintText: "Enter new note... ",
+                                            hintStyle: Theme.of(context)
+                                                .textTheme
+                                                .labelLarge
+                                                ?.copyWith(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .surface,
+                                                    fontWeight: regular),
+                                            border: const UnderlineInputBorder(
+                                                borderSide: BorderSide.none),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
-                              child: SizedBox(
-                                height: 50,
-                                child: ColorSlider(
-                                  noteColor: _color.value,
-                                  callBackColorTapped: (color) {
-                                    _color.value = color;
-                                    _saveNoteIfTextNotEmpty();
-                                  },
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                );
-              default:
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-            }
-          },
+                              // const Spacer(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: ValueListenableBuilder(
+                                      valueListenable: _imageFile,
+                                      builder: (context, imageFile, _) {
+                                        return _imageFile.value == null ||
+                                                _imageFile.value?.path == null
+                                            ? ValueListenableBuilder(
+                                                valueListenable: _imageUrl,
+                                                builder:
+                                                    (context, imageUrl, _) {
+                                                  return _imageUrl.value != ""
+                                                      ? Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .fromLTRB(16,
+                                                                  16, 8, 16),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            child: Column(
+                                                              children: [
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    Utilities.openNamedActivity(
+                                                                        context,
+                                                                        Routes
+                                                                            .enlargeImage,
+                                                                        arguments:
+                                                                            ImageArgs(imageUrl: _imageUrl.value));
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 140,
+                                                                    width: double
+                                                                        .maxFinite,
+                                                                    color: AppColors
+                                                                        .cWhite,
+                                                                    child:
+                                                                        CachedNetworkImage(
+                                                                      imageUrl:
+                                                                          _imageUrl
+                                                                              .value,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      memCacheHeight:
+                                                                          450,
+                                                                      errorWidget: (context,
+                                                                              url,
+                                                                              error) =>
+                                                                          Icon(
+                                                                        Icons
+                                                                            .error,
+                                                                        color: Theme.of(context)
+                                                                            .colorScheme
+                                                                            .surface,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    _imageFile
+                                                                            .value =
+                                                                        null;
+                                                                    if (_imageUrl
+                                                                            .value !=
+                                                                        "") {
+                                                                      _notesService
+                                                                          .deleteFile(
+                                                                              _imageUrl.value);
+                                                                      _imageUrl
+                                                                          .value = "";
+                                                                    }
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 42,
+                                                                    width: double
+                                                                        .maxFinite,
+                                                                    color: AppColors
+                                                                        .cRedAccent,
+                                                                    child:
+                                                                        const Center(
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .close,
+                                                                        color: AppColors
+                                                                            .cWhite,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : const SizedBox();
+                                                },
+                                              )
+                                            : Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        16, 16, 8, 16),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                        height: 140,
+                                                        width: double.maxFinite,
+                                                        color: AppColors.cWhite,
+                                                        child: Image.file(
+                                                            _imageFile.value!,
+                                                            fit: BoxFit.cover,
+                                                            cacheHeight: 500),
+                                                      ),
+                                                      ValueListenableBuilder(
+                                                        valueListenable: _task,
+                                                        builder:
+                                                            (context, task, _) {
+                                                          return task != null
+                                                              ? buildUploadStatus(
+                                                                  _task.value!)
+                                                              : const SizedBox();
+                                                        },
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          _imageFile.value =
+                                                              null;
+                                                          if (_imageUrl.value !=
+                                                              "") {
+                                                            _notesService
+                                                                .deleteFile(
+                                                                    _imageUrl
+                                                                        .value);
+                                                            _imageUrl.value =
+                                                                "";
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          height: 42,
+                                                          width: 200,
+                                                          color: AppColors
+                                                              .cRedAccent,
+                                                          child: const Center(
+                                                            child: Icon(
+                                                              Icons.close,
+                                                              color: AppColors
+                                                                  .cWhite,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                      },
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: ValueListenableBuilder(
+                                      valueListenable: _file,
+                                      builder: (context, fileUrl, _) {
+                                        return _file.value == null ||
+                                                _file.value?.path == null
+                                            ? ValueListenableBuilder(
+                                                valueListenable: _fileUrl,
+                                                builder: (context, fileUrl, _) {
+                                                  return _fileUrl.value != ""
+                                                      ? Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .fromLTRB(8,
+                                                                  16, 16, 16),
+                                                          child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            child: Column(
+                                                              children: [
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    Utilities.openNamedActivity(
+                                                                        context,
+                                                                        Routes
+                                                                            .pdfView,
+                                                                        arguments: Args(
+                                                                            fileUrl:
+                                                                                _fileUrl.value,
+                                                                            fileName: widget.note!.fileName ?? ""));
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 140,
+                                                                    width: double
+                                                                        .maxFinite,
+                                                                    color: AppColors
+                                                                        .cWhite,
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          Column(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.center,
+                                                                        children: [
+                                                                          Icon(
+                                                                              path.extension(widget.note!.fileName!) == ".pdf"
+                                                                                  ? Icons.picture_as_pdf
+                                                                                  : path.extension(widget.note!.fileName!) == ".pptx"
+                                                                                      ? Icons.present_to_all
+                                                                                      : Icons.file_copy,
+                                                                              size: 48,
+                                                                              color: AppColors.cDarkBlue),
+                                                                          const SizedBox(
+                                                                              height: 10),
+                                                                          Text(
+                                                                            "${widget.note?.fileName}",
+                                                                            textAlign:
+                                                                                TextAlign.center,
+                                                                            maxLines:
+                                                                                2,
+                                                                            style:
+                                                                                CustomTextStyle.smallText,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                InkWell(
+                                                                  onTap: () {
+                                                                    _file.value =
+                                                                        null;
+                                                                    if (_fileUrl
+                                                                            .value !=
+                                                                        "") {
+                                                                      _notesService
+                                                                          .deleteFile(
+                                                                              _fileUrl.value);
+                                                                      _fileUrl.value =
+                                                                          "";
+                                                                      _fileName
+                                                                          .value = "";
+                                                                    }
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 42,
+                                                                    width: 200,
+                                                                    color: AppColors
+                                                                        .cRedAccent,
+                                                                    child:
+                                                                        const Center(
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .close,
+                                                                        color: AppColors
+                                                                            .cWhite,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      : const SizedBox();
+                                                },
+                                              )
+                                            : Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        8, 16, 16, 16),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  child: Column(
+                                                    children: [
+                                                      Container(
+                                                        height: 140,
+                                                        width: double.maxFinite,
+                                                        color: AppColors.cWhite,
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Icon(
+                                                                path.extension(_file
+                                                                            .value!
+                                                                            .path) ==
+                                                                        ".pdf"
+                                                                    ? Icons
+                                                                        .picture_as_pdf
+                                                                    : path.extension(_file.value!.path) ==
+                                                                            ".pptx"
+                                                                        ? Icons
+                                                                            .present_to_all
+                                                                        : Icons
+                                                                            .file_copy,
+                                                                size: 48,
+                                                                color: AppColors
+                                                                    .cDarkBlue),
+                                                            const SizedBox(
+                                                                height: 10),
+                                                            Text(
+                                                              _file.value!.path
+                                                                  .split("/")
+                                                                  .last,
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              maxLines: 2,
+                                                              style:
+                                                                  CustomTextStyle
+                                                                      .smallText,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      ValueListenableBuilder(
+                                                        valueListenable:
+                                                            _taskFile,
+                                                        builder:
+                                                            (context, task, _) {
+                                                          return task != null
+                                                              ? buildFileUploadStatus(
+                                                                  _taskFile
+                                                                      .value!)
+                                                              : const SizedBox();
+                                                        },
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          _file.value = null;
+                                                          if (_fileUrl.value !=
+                                                              "") {
+                                                            _notesService
+                                                                .deleteFile(
+                                                                    _fileUrl
+                                                                        .value);
+                                                            _fileUrl.value = "";
+                                                            _fileName.value =
+                                                                "";
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          height: 42,
+                                                          width: 200,
+                                                          color: AppColors
+                                                              .cRedAccent,
+                                                          child: const Center(
+                                                            child: Icon(
+                                                                Icons.close,
+                                                                color: AppColors
+                                                                    .cWhite),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16, 0, 0, 16),
+                                child: SizedBox(
+                                  height: 100.h,
+                                  child: ColorSlider(
+                                    noteColor: _color.value,
+                                    callBackColorTapped: (color) {
+                                      _color.value = color;
+                                      _saveNoteIfTextNotEmpty();
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                default:
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+              }
+            },
+          ),
         ),
       ),
     );
+  }
+
+  void _downloadNoteAsPdf(BuildContext context) {
+    final title = _titleController.text.trim();
+    final content = _textController.text.trim();
+    final createdDate = _createdDate.value.isEmpty
+        ? DateFormat.yMMMMd().format(DateTime.now())
+        : DateFormat.yMMMMd().format(DateTime.parse(_createdDate.value));
+
+    if (content.isEmpty && title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cannot download empty note'),
+          backgroundColor: AppColors.cRed,
+        ),
+      );
+      return;
+    }
+
+    context.read<PdfDownloadCubit>().downloadNoteAsPdf(
+          title: title,
+          content: content,
+          createdDate: createdDate,
+        );
   }
 
   Future uploadImage() async {

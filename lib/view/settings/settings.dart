@@ -27,7 +27,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({Key? key}) : super(key: key);
+  const Settings({super.key});
 
   @override
   State<Settings> createState() => _SettingsState();
@@ -296,6 +296,7 @@ class _SettingsState extends State<Settings> {
                       leading: const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 10.0),
                         child: LogoWidget(
+                          path: "assets/notesterIcon.png",
                           width: 50,
                           boxFit: BoxFit.cover,
                         ),

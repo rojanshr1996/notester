@@ -19,13 +19,12 @@ class NotesListView extends StatefulWidget {
   final ImageCallback? onImageTap;
   final FileCallBack? onFileTap;
   const NotesListView(
-      {Key? key,
+      {super.key,
       required this.notes,
       this.onTap,
       this.onLongPress,
       this.onImageTap,
-      this.onFileTap})
-      : super(key: key);
+      this.onFileTap});
 
   @override
   State<NotesListView> createState() => _NotesListViewState();

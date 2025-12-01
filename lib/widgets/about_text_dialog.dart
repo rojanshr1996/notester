@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notester/widgets/logo_widget.dart';
 
 class AboutTextDialog extends StatelessWidget {
-  const AboutTextDialog({Key? key}) : super(key: key);
+  const AboutTextDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,10 @@ class AboutTextDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const LogoWidget(height: 80),
+            const LogoWidget(
+              height: 80,
+              path: "assets/notesterIcon.png",
+            ),
             Text(
               "Notester",
               style: Theme.of(context)

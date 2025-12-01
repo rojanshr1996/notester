@@ -38,6 +38,14 @@
           }
         },
         {
+          "client_id": "309719741864-h7pkhs2gm1m2hd3giiutg20kgnecnubt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rojanshr.notester",
+            "certificate_hash": "da76182d4acb2e7ad4c8b86c0efedd5cdeb044f4"
+          }
+        },
+        {
           "client_id": "309719741864-j0jfl2tpahsqj6evohhn413s66hjhpi5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

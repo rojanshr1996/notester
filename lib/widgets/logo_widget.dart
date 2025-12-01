@@ -4,17 +4,15 @@ class LogoWidget extends StatelessWidget {
   final double? height;
   final double? width;
   final BoxFit? boxFit;
-  const LogoWidget({Key? key, this.height, this.width, this.boxFit})
-      : super(key: key);
+  final String? path;
+  const LogoWidget(
+      {super.key, this.height, this.width, this.boxFit, this.path});
 
   @override
   Widget build(BuildContext context) {
     // final themeProvider = context.watch<DarkThemeProvider>();
     return Image.asset(
-      "assets/notesterLogoTransparent.png",
-      // themeProvider.darkTheme
-      //     ? "assets/appLogo.png"
-      //     : "assets/appLogoLight.png",
+      path ?? "assets/notesterLogoTransparent.png",
       height: height,
       width: width,
       fit: boxFit,

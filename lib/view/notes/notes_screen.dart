@@ -4,7 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:notester/cubit/pdf_download/pdf_download_cubit.dart';
+import 'package:notester/cubit/pdf_download/pdf_download_state.dart';
 import 'package:notester/model/model.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
 import 'package:notester/services/auth_services.dart';
@@ -26,7 +30,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NotesScreen extends StatefulWidget {
-  const NotesScreen({Key? key}) : super(key: key);
+  const NotesScreen({super.key});
 
   @override
   State<NotesScreen> createState() => _NotesScreenState();
@@ -79,54 +83,106 @@ class _NotesScreenState extends State<NotesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DarkThemeProvider>(
-      builder: (context, value, child) {
-        return Scaffold(
+    return BlocProvider(
+      create: (context) => PdfDownloadCubit(),
+      child: BlocListener<PdfDownloadCubit, PdfDownloadState>(
+        listener: (context, state) {
+          if (state is PdfDownloadLoading) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Generating PDF...'),
+                backgroundColor: Theme.of(context).primaryColor,
+              ),
+            );
+          } else if (state is PdfDownloadSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'PDF saved to: ${state.filePath}',
+                  style: const TextStyle(color: AppColors.cWhite),
+                ),
+                duration: const Duration(seconds: 3),
+                action: SnackBarAction(
+                  label: 'OK',
+                  onPressed: () {},
+                  textColor: AppColors.cWhite,
+                ),
+                backgroundColor: AppColors.cGreen,
+              ),
+            );
+          } else if (state is PdfDownloadError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: ValueListenableBuilder(
-            valueListenable: _filterValue,
-            builder: (context, task, _) {
-              return StreamBuilder(
-                stream: _filterValue.value == "fav"
-                    ? _notesService.allFavouriteNotes(
-                        ownerUserId: userId!, favourite: true)
-                    : _notesService.allNotes(ownerUserId: userId!),
-                builder: (context, snapshot) {
-                  if (userId == null) {
-                    Utilities.removeNamedStackActivity(context, Routes.login);
-                  }
+          body: _buildNotesTab(),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () {
+              Utilities.openNamedActivity(context, Routes.checklists);
+            },
+            icon: const Icon(Icons.checklist, color: AppColors.cWhite),
+            label: const Text(
+              'Checklists',
+              style: TextStyle(color: AppColors.cWhite),
+            ),
+            backgroundColor: AppColors.cBlueShade,
+          ),
+        ),
+      ),
+    );
+  }
 
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                    case ConnectionState.active:
-                      if (snapshot.hasData) {
-                        final allNotes = snapshot.data as Iterable<CloudNote>;
+  Widget _buildNotesTab() {
+    return ValueListenableBuilder(
+      valueListenable: _filterValue,
+      builder: (context, task, _) {
+        return StreamBuilder(
+          stream: _filterValue.value == "fav"
+              ? _notesService.allFavouriteNotes(
+                  ownerUserId: userId!, favourite: true)
+              : _notesService.allNotes(ownerUserId: userId!),
+          builder: (context, snapshot) {
+            if (userId == null) {
+              Utilities.removeNamedStackActivity(context, Routes.login);
+            }
 
-                        return NotificationListener<ScrollEndNotification>(
-                          onNotification: (_) {
-                            _snapAppBar();
-                            return false;
-                          },
-                          child: CupertinoScrollbar(
-                            controller: _controller,
-                            child: CustomScrollView(
-                              controller: _controller,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              slivers: [
-                                SliverAppBar(
-                                  pinned: true,
-                                  stretch: true,
-                                  centerTitle: false,
-                                  shadowColor:
-                                      Theme.of(context).colorScheme.shadow,
-                                  iconTheme: Theme.of(context)
-                                      .appBarTheme
-                                      .iconTheme
-                                      ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .outline),
-                                  flexibleSpace: SliverHeaderText(
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+              case ConnectionState.active:
+                if (snapshot.hasData) {
+                  final allNotes = snapshot.data as Iterable<CloudNote>;
+
+                  return NotificationListener<ScrollEndNotification>(
+                    onNotification: (_) {
+                      _snapAppBar();
+                      return false;
+                    },
+                    child: CupertinoScrollbar(
+                      controller: _controller,
+                      child: CustomScrollView(
+                        controller: _controller,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          SliverAppBar(
+                            pinned: true,
+                            stretch: true,
+                            centerTitle: false,
+                            shadowColor: Theme.of(context).colorScheme.shadow,
+                            iconTheme: Theme.of(context)
+                                .appBarTheme
+                                .iconTheme
+                                ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.outline),
+                            flexibleSpace: Consumer<DarkThemeProvider>(
+                              builder: (context, value, child) =>
+                                  SliverHeaderText(
                                       maxHeight: maxHeight,
                                       minHeight: minHeight,
                                       notesLength: allNotes.isEmpty
@@ -140,268 +196,284 @@ class _NotesScreenState extends State<NotesScreen> {
                                       imagePath: value.darkTheme
                                           ? "assets/notesImage.png"
                                           : "assets/notesImageLightNew.png"),
-                                  expandedHeight: maxHeight -
-                                      MediaQuery.of(context).padding.top,
-                                  leading: StreamBuilder(
-                                    stream: _notesService.userData(
-                                        ownerUserId: userId!),
-                                    builder: (context, snapshot) {
-                                      switch (snapshot.connectionState) {
-                                        case ConnectionState.waiting:
-                                        case ConnectionState.active:
-                                          if (snapshot.hasData) {
-                                            final userData = snapshot.data
-                                                as Iterable<UserModel>;
-                                            return userData.isEmpty
-                                                ? const SizedBox.shrink()
-                                                : Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(8),
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        Utilities
-                                                            .openNamedActivity(
-                                                                context,
-                                                                Routes
-                                                                    .settings);
-                                                      },
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Theme
-                                                                        .of(
-                                                                            context)
-                                                                    .primaryColor),
-                                                            color: AppColors
-                                                                .cDarkBlueAccent,
-                                                            shape: BoxShape
-                                                                .circle),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      100),
-                                                          child:
-                                                              CachedNetworkImage(
-                                                            memCacheHeight: 200,
-                                                            imageUrl: userData
-                                                                    .first
-                                                                    .profileImage ??
-                                                                "",
-                                                            fit: BoxFit.cover,
-                                                            placeholder: (context, url) => Center(
-                                                                child: SimpleCircularLoader(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .outline)),
-                                                            errorWidget: (context,
-                                                                    url,
-                                                                    error) =>
-                                                                Icon(
-                                                                    Icons.image,
-                                                                    color: AppColors
-                                                                        .cLight,
-                                                                    size: 26.h),
-                                                          ),
-                                                        ),
-                                                      ),
+                            ),
+                            expandedHeight:
+                                maxHeight - MediaQuery.of(context).padding.top,
+                            leading: StreamBuilder(
+                              stream:
+                                  _notesService.userData(ownerUserId: userId!),
+                              builder: (context, snapshot) {
+                                switch (snapshot.connectionState) {
+                                  case ConnectionState.waiting:
+                                  case ConnectionState.active:
+                                    if (snapshot.hasData) {
+                                      final userData =
+                                          snapshot.data as Iterable<UserModel>;
+                                      return userData.isEmpty
+                                          ? const SizedBox.shrink()
+                                          : Padding(
+                                              padding: const EdgeInsets.all(8),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Utilities.openNamedActivity(
+                                                      context, Routes.settings);
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .primaryColor),
+                                                      color: AppColors
+                                                          .cDarkBlueAccent,
+                                                      shape: BoxShape.circle),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            100),
+                                                    child: CachedNetworkImage(
+                                                      memCacheHeight: 200,
+                                                      imageUrl: userData.first
+                                                              .profileImage ??
+                                                          "",
+                                                      fit: BoxFit.cover,
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          Center(
+                                                              child: SimpleCircularLoader(
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .outline)),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          Icon(Icons.image,
+                                                              color: AppColors
+                                                                  .cLight,
+                                                              size: 26.h),
                                                     ),
-                                                  );
-                                          } else {
-                                            return const SizedBox(
-                                              height: 70,
-                                              width: 70,
+                                                  ),
+                                                ),
+                                              ),
                                             );
-                                          }
-
-                                        default:
-                                          return const Center(
-                                            child: SimpleCircularLoader(),
-                                          );
-                                      }
-                                    },
-                                  ),
-                                  actions: [
-                                    IconButton(
-                                      onPressed: () {
-                                        Utilities.openNamedActivity(
-                                            context, Routes.createUpdateNote);
-                                      },
-                                      icon: Icon(
-                                        Icons.add,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline,
-                                      ),
-                                    ),
-                                    PopupMenuButton(
-                                      color: Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                      elevation: 20,
-                                      enabled: true,
-                                      icon:
-                                          const Icon(Icons.filter_list_rounded),
-                                      tooltip: "Filter list",
-                                      onSelected: (String value) {
-                                        _filterValue.value = value;
-                                      },
-                                      itemBuilder: (context) => [
-                                        PopupMenuItem(
-                                          value: "all",
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.list,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                              const SizedBox(width: 12),
-                                              Text("Show All",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge),
-                                            ],
-                                          ),
-                                        ),
-                                        PopupMenuItem(
-                                          value: "fav",
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.star,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                              ),
-                                              const SizedBox(width: 12),
-                                              Text("Only Favourites",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyLarge),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                if (allNotes.isNotEmpty)
-                                  NotesListView(
-                                    notes: allNotes,
-                                    onTap: (note) {
-                                      Utilities.openNamedActivity(
-                                          context, Routes.createUpdateNote,
-                                          arguments: note);
-                                    },
-                                    onImageTap: (imageUrl) {
-                                      log(imageUrl);
-                                      Utilities.openNamedActivity(
-                                          context, Routes.notesImage,
-                                          arguments:
-                                              ImageArgs(imageUrl: imageUrl));
-                                    },
-                                    onFileTap: (fileArg) {
-                                      if (path.extension(fileArg.fileName) ==
-                                          ".pdf") {
-                                        Utilities.openNamedActivity(
-                                            context, Routes.pdfView,
-                                            arguments: fileArg);
-                                      } else {
-                                        Utils.launchFile(fileArg.fileUrl);
-                                      }
-                                    },
-                                    onLongPress: (note) {
-                                      showBottomSheet(
-                                        context: context,
-                                        onDeleteTap: () async {
-                                          Utilities.closeActivity(context);
-
-                                          final shouldDelete =
-                                              await showDeleteDialog(context);
-                                          log(shouldDelete.toString());
-                                          if (shouldDelete) {
-                                            if (note.imageUrl != "") {
-                                              _notesService
-                                                  .deleteFile(note.imageUrl!);
-                                            }
-                                            if (note.fileUrl != "") {
-                                              _notesService
-                                                  .deleteFile(note.fileUrl!);
-                                            }
-                                            await _notesService.deleteNote(
-                                                documentId: note.documentId);
-                                          }
-                                        },
-                                        onShareTap: () async {
-                                          Utilities.closeActivity(context);
-                                          if (note.text.isEmpty) {
-                                            await showCannotShareEmptyNoteDialog(
-                                                context);
-                                          } else {
-                                            Share.share(note.text);
-                                          }
-                                        },
+                                    } else {
+                                      return const SizedBox(
+                                        height: 70,
+                                        width: 70,
                                       );
-                                    },
-                                  )
-                                else
-                                  const SliverFillRemaining(
-                                    hasScrollBody: false,
-                                    child: Center(
-                                      child: NoDataWidget(
-                                          title: "No notes available"),
+                                    }
+
+                                  default:
+                                    return const Center(
+                                      child: SimpleCircularLoader(),
+                                    );
+                                }
+                              },
+                            ),
+                            actions: [
+                              IconButton(
+                                onPressed: () {
+                                  Utilities.openNamedActivity(
+                                      context, Routes.createUpdateNote);
+                                },
+                                icon: Icon(
+                                  Icons.add,
+                                  color: Theme.of(context).colorScheme.outline,
+                                ),
+                              ),
+                              PopupMenuButton(
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor,
+                                elevation: 20,
+                                enabled: true,
+                                icon: const Icon(Icons.filter_list_rounded),
+                                tooltip: "Filter list",
+                                onSelected: (String value) {
+                                  _filterValue.value = value;
+                                },
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: "all",
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.list,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text("Show All",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge),
+                                      ],
                                     ),
                                   ),
-                              ],
-                            ),
+                                  PopupMenuItem(
+                                    value: "fav",
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.star,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text("Only Favourites",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
-                        );
-                      } else {
-                        return DefaultLoadingScreen(
-                          maxHeight: maxHeight,
-                          minHeight: minHeight,
-                          actions: [
-                            IconButton(
-                              onPressed: () {
+                          if (allNotes.isNotEmpty)
+                            NotesListView(
+                              notes: allNotes,
+                              onTap: (note) {
                                 Utilities.openNamedActivity(
-                                    context, Routes.createUpdateNote);
+                                    context, Routes.createUpdateNote,
+                                    arguments: note);
                               },
-                              icon: const Icon(Icons.add),
-                            ),
-                          ],
-                        );
-                      }
+                              onImageTap: (imageUrl) {
+                                log(imageUrl);
+                                Utilities.openNamedActivity(
+                                    context, Routes.notesImage,
+                                    arguments: ImageArgs(imageUrl: imageUrl));
+                              },
+                              onFileTap: (fileArg) {
+                                if (path.extension(fileArg.fileName) ==
+                                    ".pdf") {
+                                  Utilities.openNamedActivity(
+                                      context, Routes.pdfView,
+                                      arguments: fileArg);
+                                } else {
+                                  Utils.launchFile(fileArg.fileUrl);
+                                }
+                              },
+                              onLongPress: (note) {
+                                showBottomSheet(
+                                  context: context,
+                                  note: note,
+                                  onDeleteTap: () async {
+                                    Utilities.closeActivity(context);
 
-                    default:
-                      return DefaultLoadingScreen(
-                        maxHeight: maxHeight,
-                        minHeight: minHeight,
-                        actions: [
-                          IconButton(
-                            onPressed: () {
-                              Utilities.openNamedActivity(
-                                  context, Routes.createUpdateNote);
-                            },
-                            icon: const Icon(Icons.add),
-                          ),
+                                    final shouldDelete =
+                                        await showDeleteDialog(context);
+                                    log(shouldDelete.toString());
+                                    if (shouldDelete) {
+                                      if (note.imageUrl != "") {
+                                        _notesService
+                                            .deleteFile(note.imageUrl!);
+                                      }
+                                      if (note.fileUrl != "") {
+                                        _notesService.deleteFile(note.fileUrl!);
+                                      }
+                                      await _notesService.deleteNote(
+                                          documentId: note.documentId);
+                                    }
+                                  },
+                                  onShareTap: () async {
+                                    Utilities.closeActivity(context);
+                                    if (note.text.isEmpty) {
+                                      await showCannotShareEmptyNoteDialog(
+                                          context);
+                                    } else {
+                                      Share.share(note.text);
+                                    }
+                                  },
+                                  onDownloadTap: () {
+                                    Utilities.closeActivity(context);
+                                    _downloadNoteAsPdf(context, note);
+                                  },
+                                );
+                              },
+                            )
+                          else
+                            const SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child:
+                                    NoDataWidget(title: "No notes available"),
+                              ),
+                            ),
                         ],
-                      );
-                  }
-                },
-              );
-            },
-          ),
+                      ),
+                    ),
+                  );
+                } else {
+                  return DefaultLoadingScreen(
+                    maxHeight: maxHeight,
+                    minHeight: minHeight,
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          Utilities.openNamedActivity(
+                              context, Routes.createUpdateNote);
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  );
+                }
+
+              default:
+                return DefaultLoadingScreen(
+                  maxHeight: maxHeight,
+                  minHeight: minHeight,
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        Utilities.openNamedActivity(
+                            context, Routes.createUpdateNote);
+                      },
+                      icon: const Icon(Icons.add),
+                    ),
+                  ],
+                );
+            }
+          },
         );
       },
     );
   }
 
-  showBottomSheet(
-      {required BuildContext context,
-      VoidCallback? onDeleteTap,
-      VoidCallback? onShareTap}) {
+  void _downloadNoteAsPdf(BuildContext context, CloudNote note) {
+    final title = note.title.trim();
+    final content = note.text.trim();
+    final createdDate = note.createdDate!.isEmpty
+        ? DateFormat.yMMMMd().format(DateTime.now())
+        : DateFormat.yMMMMd().format(DateTime.parse(note.createdDate!));
+
+    if (content.isEmpty && title.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cannot download empty note'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    context.read<PdfDownloadCubit>().downloadNoteAsPdf(
+          title: title,
+          content: content,
+          createdDate: createdDate,
+        );
+  }
+
+  showBottomSheet({
+    required BuildContext context,
+    required CloudNote note,
+    VoidCallback? onDeleteTap,
+    VoidCallback? onShareTap,
+    VoidCallback? onDownloadTap,
+  }) {
     return showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -410,25 +482,36 @@ class _NotesScreenState extends State<NotesScreen> {
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder: (context) {
-        return Container(
-          color: AppColors.transparent,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                onTap: onShareTap,
-                leading: Icon(Icons.share,
-                    color: Theme.of(context).colorScheme.surface),
-                title:
-                    Text("Share", style: Theme.of(context).textTheme.bodyLarge),
-              ),
-              ListTile(
-                onTap: onDeleteTap,
-                leading: const Icon(Icons.delete, color: AppColors.cRedAccent),
-                title: Text("Delete",
-                    style: Theme.of(context).textTheme.bodyLarge),
-              ),
-            ],
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 24.h),
+          child: Container(
+            color: AppColors.transparent,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  onTap: onShareTap,
+                  leading: Icon(Icons.share,
+                      color: Theme.of(context).colorScheme.surface),
+                  title: Text("Share",
+                      style: Theme.of(context).textTheme.bodyLarge),
+                ),
+                ListTile(
+                  onTap: onDownloadTap,
+                  leading: Icon(Icons.download,
+                      color: Theme.of(context).colorScheme.surface),
+                  title: Text("Download as PDF",
+                      style: Theme.of(context).textTheme.bodyLarge),
+                ),
+                ListTile(
+                  onTap: onDeleteTap,
+                  leading:
+                      const Icon(Icons.delete, color: AppColors.cRedAccent),
+                  title: Text("Delete",
+                      style: Theme.of(context).textTheme.bodyLarge),
+                ),
+              ],
+            ),
           ),
         );
       },

@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:notester/bloc/app_update_bloc/app_update_bloc.dart';
 import 'package:notester/bloc/authBloc/auth_bloc.dart';
 import 'package:notester/core/service_locator.dart';
+import 'package:notester/cubit/pdf_download/pdf_download_cubit.dart';
 import 'package:notester/provider/dark_theme_provider.dart';
 import 'package:notester/services/auth_services.dart';
 import 'package:notester/services/fcm_services.dart';
@@ -40,7 +41,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -78,6 +79,8 @@ class _MyAppState extends State<MyApp> {
               ),
             ),
             BlocProvider(create: (context) => AppUpdateBloc()),
+            BlocProvider<PdfDownloadCubit>(
+                create: (context) => PdfDownloadCubit()),
           ],
           child: Consumer<DarkThemeProvider>(
             builder: (context, value, child) {

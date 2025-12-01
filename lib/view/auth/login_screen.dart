@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:custom_widgets/custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,7 +22,7 @@ import 'package:notester/widgets/logo_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   final String message;
-  const LoginScreen({Key? key, this.message = ""}) : super(key: key);
+  const LoginScreen({super.key, this.message = ""});
 
   @override
   LoginScreenState createState() => LoginScreenState();
@@ -95,6 +97,7 @@ class LoginScreenState extends State<LoginScreen> {
                     } else if (state.exception is WrongPasswordAuthException) {
                       await showErrorDialog(context, "Wrong credentials");
                     } else if (state.exception is GenericAuthException) {
+                      log("ERROR: ${state.exception.runtimeType}");
                       await showErrorDialog(context, "Authentication Error");
                     }
                   }
@@ -208,10 +211,8 @@ class LoginScreenState extends State<LoginScreen> {
                                     borderRadius: BorderRadius.circular(10),
                                     splashBorderRadius:
                                         BorderRadius.circular(10),
-                                    buttonColor: Theme.of(context)
-                                        .buttonTheme
-                                        .colorScheme
-                                        ?.primary,
+                                    buttonColor:
+                                        Theme.of(context).colorScheme.secondary,
                                     onPressed: () =>
                                         _authenticateWithEmailAndPassword(
                                             context),
