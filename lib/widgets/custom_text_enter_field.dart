@@ -35,7 +35,7 @@ class CustomTextEnterField extends StatelessWidget {
   final Widget? label;
   final AutovalidateMode? autovalidateMode;
   const CustomTextEnterField({
-    Key? key,
+    super.key,
     this.textEditingController,
     this.hintText,
     this.textInputType,
@@ -59,13 +59,13 @@ class CustomTextEnterField extends StatelessWidget {
     this.maxLength,
     this.filled = false,
     this.fillColor,
-    this.hintStyle = const TextStyle(color: CustomColor.cgrey),
+    this.hintStyle = const TextStyle(color: CustomColor.cGrey),
     this.style,
     this.textCapitalization = TextCapitalization.none,
-    this.errorStyle = const TextStyle(color: CustomColor.cred),
+    this.errorStyle = const TextStyle(color: CustomColor.cRed),
     this.label,
     this.autovalidateMode,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

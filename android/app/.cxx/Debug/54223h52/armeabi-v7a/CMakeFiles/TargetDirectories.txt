@@ -1,0 +1,2 @@
+/Users/rojanshrestha/Documents/rojan/personalProjects/notester/android/app/.cxx/Debug/54223h52/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/rojanshrestha/Documents/rojan/personalProjects/notester/android/app/.cxx/Debug/54223h52/armeabi-v7a/CMakeFiles/rebuild_cache.dir

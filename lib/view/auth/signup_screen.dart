@@ -17,7 +17,7 @@ import 'package:notester/widgets/logo_widget.dart';
 import 'package:notester/widgets/safe_area_header.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+  const SignupScreen({super.key});
 
   @override
   _SignupScreenState createState() => _SignupScreenState();
@@ -200,7 +200,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                             value: value!,
                                             fieldName: "Phone",
                                             maxCharacter: 10,
-                                            minCharater: 7),
+                                            minCharacter: 7),
                                         suffixIcon: const Icon(Icons.phone,
                                             color: AppColors.cDarkBlue),
                                       ),

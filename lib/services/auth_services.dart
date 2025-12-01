@@ -154,10 +154,22 @@ class AuthServices {
 
   Future<AuthUser?> googleLogIn() async {
     try {
+      // Sign out first to ensure clean state
+      await googleSignIn.signOut();
+
       final googleUser = await googleSignIn.signIn();
-      if (googleUser == null) return null;
+      if (googleUser == null) {
+        // User cancelled the sign-in
+        return null;
+      }
 
       final googleAuth = await googleUser.authentication;
+
+      // Check if we have the required tokens
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        throw GenericAuthException();
+      }
+
       final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
@@ -176,7 +188,13 @@ class AuthServices {
       } else {
         throw UserNotLoggedInAuthException();
       }
+    } on FirebaseAuthException catch (e) {
+      // Log the specific Firebase error for debugging
+      print('Firebase Auth Error: ${e.code} - ${e.message}');
+      throw GenericAuthException();
     } catch (e) {
+      // Log the error for debugging
+      print('Google Sign-In Error: $e');
       throw GenericAuthException();
     }
   }
