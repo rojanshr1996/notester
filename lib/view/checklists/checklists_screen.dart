@@ -39,7 +39,7 @@ class _ChecklistsScreenState extends State<ChecklistsScreen> {
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          title: const Text('Checklists'),
+          title: const Text('To-Do List'),
           actions: [
             IconButton(
               onPressed: () async {

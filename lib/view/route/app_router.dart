@@ -9,6 +9,7 @@ import 'package:notester/view/auth/login_screen.dart';
 import 'package:notester/view/auth/signup_screen.dart';
 import 'package:notester/view/checklists/checklists_screen.dart';
 import 'package:notester/view/notes/create_update_notes_view.dart';
+import 'package:notester/view/scratchpad/scratchpad_screen.dart';
 import 'package:notester/view/notes/notes_screen.dart';
 import 'package:notester/view/notes/pdf_viewer_screen.dart';
 import 'package:notester/view/profile/profile_screen.dart';
@@ -42,6 +43,9 @@ class AppRouter {
 
       case Routes.checklists:
         return MaterialPageRoute(builder: (_) => const ChecklistsScreen());
+
+      case Routes.scratchpad:
+        return MaterialPageRoute(builder: (_) => const ScratchpadScreen());
 
       case Routes.verifyEmail:
         return MaterialPageRoute(builder: (_) => const EmailVerifyScreen());
