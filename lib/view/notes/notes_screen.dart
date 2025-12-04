@@ -122,17 +122,17 @@ class _NotesScreenState extends State<NotesScreen> {
         child: Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: _buildNotesTab(),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              Utilities.openNamedActivity(context, Routes.checklists);
-            },
-            icon: const Icon(Icons.checklist, color: AppColors.cWhite),
-            label: const Text(
-              'Checklists',
-              style: TextStyle(color: AppColors.cWhite),
-            ),
-            backgroundColor: AppColors.cBlueShade,
-          ),
+          // floatingActionButton: FloatingActionButton.extended(
+          //   onPressed: () {
+          //     Utilities.openNamedActivity(context, Routes.checklists);
+          //   },
+          //   icon: const Icon(Icons.checklist, color: AppColors.cWhite),
+          //   label: const Text(
+          //     'Checklists',
+          //     style: TextStyle(color: AppColors.cWhite),
+          //   ),
+          //   backgroundColor: AppColors.cBlueShade,
+          // ),
         ),
       ),
     );
@@ -298,9 +298,8 @@ class _NotesScreenState extends State<NotesScreen> {
                                       children: [
                                         Icon(
                                           Icons.list,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          color:
+                                              Theme.of(context).iconTheme.color,
                                         ),
                                         const SizedBox(width: 12),
                                         Text("Show All",
@@ -316,9 +315,8 @@ class _NotesScreenState extends State<NotesScreen> {
                                       children: [
                                         Icon(
                                           Icons.star,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          color:
+                                              Theme.of(context).iconTheme.color,
                                         ),
                                         const SizedBox(width: 12),
                                         Text("Only Favourites",
@@ -331,6 +329,60 @@ class _NotesScreenState extends State<NotesScreen> {
                                 ],
                               )
                             ],
+                          ),
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 12),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        Utilities.openNamedActivity(
+                                            context, Routes.checklists);
+                                      },
+                                      icon: const Icon(Icons.checklist_rounded,
+                                          size: 20),
+                                      label: const Text('To-Do List'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.cBlueShade,
+                                        foregroundColor: AppColors.cWhite,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        Utilities.openNamedActivity(
+                                            context, Routes.scratchpad);
+                                      },
+                                      icon: const Icon(Icons.edit_note_rounded,
+                                          size: 20),
+                                      label: const Text('Scratch Pad'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.cBlueShade,
+                                        foregroundColor: AppColors.cWhite,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                           if (allNotes.isNotEmpty)
                             NotesListView(
