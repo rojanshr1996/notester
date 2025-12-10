@@ -23,14 +23,29 @@ class ChecklistsScreen extends StatefulWidget {
 class _ChecklistsScreenState extends State<ChecklistsScreen> {
   late final FirebaseCloudStorage _notesService;
   final AuthServices _auth = AuthServices();
+  late ValueNotifier<int> _refreshNotifier;
 
   String? get userId => _auth.currentUser == null ? "" : _auth.currentUser!.id;
 
   @override
   void initState() {
     debugPrint(userId);
+    _refreshNotifier = ValueNotifier<int>(0);
     _notesService = FirebaseCloudStorage();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _refreshNotifier.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onRefresh() async {
+    // Trigger a rebuild by updating the refresh notifier
+    _refreshNotifier.value++;
+    // Add a small delay to show the refresh indicator
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   @override
@@ -53,60 +68,72 @@ class _ChecklistsScreenState extends State<ChecklistsScreen> {
             ),
           ],
         ),
-        body: StreamBuilder(
-          stream: _notesService.allChecklists(ownerUserId: userId!),
-          builder: (context, snapshot) {
-            if (userId == null) {
-              Utilities.removeNamedStackActivity(context, Routes.login);
-            }
-
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-              case ConnectionState.active:
-                if (snapshot.hasData) {
-                  final allChecklists =
-                      snapshot.data as Iterable<CloudChecklist>;
-
-                  return allChecklists.isNotEmpty
-                      ? CupertinoScrollbar(
-                          child: CustomScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            slivers: [
-                              ChecklistListView(
-                                checklists: allChecklists,
-                                onTap: (checklist) {
-                                  _showChecklistDialog(context,
-                                      checklist: checklist);
-                                },
-                                onLongPress: (checklist) {
-                                  showChecklistBottomSheet(
-                                    context: context,
-                                    checklist: checklist,
-                                    onDeleteTap: () async {
-                                      Utilities.closeActivity(context);
-                                      final shouldDelete =
-                                          await showDeleteDialog(context);
-                                      if (shouldDelete) {
-                                        await _notesService.deleteChecklist(
-                                            documentId: checklist.documentId);
-                                      }
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        )
-                      : const Center(
-                          child: NoDataWidget(title: "No checklists available"),
-                        );
-                } else {
-                  return const Center(child: SimpleCircularLoader());
+        body: ValueListenableBuilder(
+          valueListenable: _refreshNotifier,
+          builder: (context, refreshValue, _) {
+            return StreamBuilder(
+              stream: _notesService.allChecklists(ownerUserId: userId!),
+              builder: (context, snapshot) {
+                if (userId == null) {
+                  Utilities.removeNamedStackActivity(context, Routes.login);
                 }
 
-              default:
-                return const Center(child: SimpleCircularLoader());
-            }
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    if (snapshot.hasData) {
+                      final allChecklists =
+                          snapshot.data as Iterable<CloudChecklist>;
+
+                      return allChecklists.isNotEmpty
+                          ? RefreshIndicator(
+                              onRefresh: _onRefresh,
+                              child: CupertinoScrollbar(
+                                child: CustomScrollView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  slivers: [
+                                    ChecklistListView(
+                                      checklists: allChecklists,
+                                      onTap: (checklist) {
+                                        _showChecklistDialog(context,
+                                            checklist: checklist);
+                                      },
+                                      onLongPress: (checklist) {
+                                        showChecklistBottomSheet(
+                                          context: context,
+                                          checklist: checklist,
+                                          onDeleteTap: () async {
+                                            Utilities.closeActivity(context);
+                                            final shouldDelete =
+                                                await showDeleteDialog(context);
+                                            if (shouldDelete) {
+                                              await _notesService
+                                                  .deleteChecklist(
+                                                      documentId:
+                                                          checklist.documentId);
+                                            }
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : const Center(
+                              child: NoDataWidget(
+                                  title: "No checklists available"),
+                            );
+                    } else {
+                      return const Center(child: SimpleCircularLoader());
+                    }
+
+                  default:
+                    return const Center(child: SimpleCircularLoader());
+                }
+              },
+            );
           },
         ),
       ),

@@ -160,7 +160,7 @@ class _SettingsState extends State<Settings> {
                                     onChanged: (value) {
                                       themeChange.darkTheme = value;
                                     },
-                                    activeColor:
+                                    activeThumbColor:
                                         Theme.of(context).colorScheme.surface,
                                   )),
                             ),
