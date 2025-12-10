@@ -34,7 +34,7 @@ class _ScratchpadScreenState extends State<ScratchpadScreen> {
     final defaultColor = isDarkMode ? AppColors.cWhite : AppColors.cBlack;
 
     selectedColorNotifier = ValueNotifier<Color>(defaultColor);
-    strokeWidthNotifier = ValueNotifier<double>(3.0);
+    strokeWidthNotifier = ValueNotifier<double>(2.0);
     isEraserNotifier = ValueNotifier<bool>(false);
     isSavingNotifier = ValueNotifier<bool>(false);
     screenshotController = ScreenshotController();
@@ -171,21 +171,6 @@ class _ScratchpadScreenState extends State<ScratchpadScreen> {
         elevation: 4,
         shadowColor: Theme.of(context).colorScheme.shadow,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.undo),
-            tooltip: 'Undo',
-            onPressed: notifier.canUndo ? notifier.undo : null,
-          ),
-          IconButton(
-            icon: const Icon(Icons.redo),
-            tooltip: 'Redo',
-            onPressed: notifier.canRedo ? notifier.redo : null,
-          ),
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            tooltip: 'Clear',
-            onPressed: notifier.clear,
-          ),
           ValueListenableBuilder<bool>(
             valueListenable: isSavingNotifier,
             builder: (context, isSaving, _) {
@@ -217,6 +202,48 @@ class _ScratchpadScreenState extends State<ScratchpadScreen> {
               child: Scribble(
                 notifier: notifier,
                 drawPen: true,
+              ),
+            ),
+          ),
+          // Floating Action Buttons
+          Positioned(
+            top: 16,
+            right: 16,
+            child: Card(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ValueListenableBuilder<void>(
+                    valueListenable: notifier,
+                    builder: (context, _, __) {
+                      return IconButton(
+                        icon: const Icon(Icons.undo),
+                        tooltip: 'Undo',
+                        onPressed: notifier.canUndo ? notifier.undo : null,
+                      );
+                    },
+                  ),
+                  ValueListenableBuilder<void>(
+                    valueListenable: notifier,
+                    builder: (context, _, __) {
+                      return IconButton(
+                        icon: const Icon(Icons.redo),
+                        tooltip: 'Redo',
+                        onPressed: notifier.canRedo ? notifier.redo : null,
+                      );
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    tooltip: 'Clear',
+                    onPressed: notifier.clear,
+                  ),
+                ],
               ),
             ),
           ),
@@ -336,7 +363,7 @@ class _ScratchpadScreenState extends State<ScratchpadScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).colorScheme.surface.withOpacity(0.2)
+              ? Theme.of(context).colorScheme.surface.withValues(alpha: 0.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(

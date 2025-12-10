@@ -53,11 +53,13 @@ class _NotesScreenState extends State<NotesScreen> {
   double get minHeight => 120;
 
   late ValueNotifier<String> _filterValue;
+  late ValueNotifier<int> _refreshNotifier;
 
   @override
   void initState() {
     debugPrint(userId);
     _filterValue = ValueNotifier<String>("");
+    _refreshNotifier = ValueNotifier<int>(0);
     _notesService = FirebaseCloudStorage();
     fcmServices = FcmServices();
     super.initState();
@@ -78,7 +80,15 @@ class _NotesScreenState extends State<NotesScreen> {
   @override
   void dispose() {
     _filterValue.dispose();
+    _refreshNotifier.dispose();
     super.dispose();
+  }
+
+  Future<void> _onRefresh() async {
+    // Trigger a rebuild by updating the refresh notifier
+    _refreshNotifier.value++;
+    // Add a small delay to show the refresh indicator
+    await Future.delayed(const Duration(milliseconds: 500));
   }
 
   @override
@@ -142,353 +152,388 @@ class _NotesScreenState extends State<NotesScreen> {
     return ValueListenableBuilder(
       valueListenable: _filterValue,
       builder: (context, task, _) {
-        return StreamBuilder(
-          stream: _filterValue.value == "fav"
-              ? _notesService.allFavouriteNotes(
-                  ownerUserId: userId!, favourite: true)
-              : _notesService.allNotes(ownerUserId: userId!),
-          builder: (context, snapshot) {
-            if (userId == null) {
-              Utilities.removeNamedStackActivity(context, Routes.login);
-            }
-
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-              case ConnectionState.active:
-                if (snapshot.hasData) {
-                  final allNotes = snapshot.data as Iterable<CloudNote>;
-
-                  return NotificationListener<ScrollEndNotification>(
-                    onNotification: (_) {
-                      _snapAppBar();
-                      return false;
-                    },
-                    child: CupertinoScrollbar(
-                      controller: _controller,
-                      child: CustomScrollView(
-                        controller: _controller,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        slivers: [
-                          SliverAppBar(
-                            pinned: true,
-                            stretch: true,
-                            centerTitle: false,
-                            shadowColor: Theme.of(context).colorScheme.shadow,
-                            iconTheme: Theme.of(context)
-                                .appBarTheme
-                                .iconTheme
-                                ?.copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.outline),
-                            flexibleSpace: Consumer<DarkThemeProvider>(
-                              builder: (context, value, child) =>
-                                  SliverHeaderText(
-                                      maxHeight: maxHeight,
-                                      minHeight: minHeight,
-                                      notesLength: allNotes.isEmpty
-                                          ? 0
-                                          : allNotes.length,
-                                      onlyShowFavorite:
-                                          _filterValue.value.toLowerCase() ==
-                                                  'fav'
-                                              ? true
-                                              : false,
-                                      imagePath: value.darkTheme
-                                          ? "assets/notesImage.png"
-                                          : "assets/notesImageLightNew.png"),
-                            ),
-                            expandedHeight:
-                                maxHeight - MediaQuery.of(context).padding.top,
-                            leading: StreamBuilder(
-                              stream:
-                                  _notesService.userData(ownerUserId: userId!),
-                              builder: (context, snapshot) {
-                                switch (snapshot.connectionState) {
-                                  case ConnectionState.waiting:
-                                  case ConnectionState.active:
-                                    if (snapshot.hasData) {
-                                      final userData =
-                                          snapshot.data as Iterable<UserModel>;
-                                      return userData.isEmpty
-                                          ? const SizedBox.shrink()
-                                          : Padding(
-                                              padding: const EdgeInsets.all(8),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  Utilities.openNamedActivity(
-                                                      context, Routes.settings);
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .primaryColor),
-                                                      color: AppColors
-                                                          .cDarkBlueAccent,
-                                                      shape: BoxShape.circle),
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                    child: CachedNetworkImage(
-                                                      memCacheHeight: 200,
-                                                      imageUrl: userData.first
-                                                              .profileImage ??
-                                                          "",
-                                                      fit: BoxFit.cover,
-                                                      placeholder: (context,
-                                                              url) =>
-                                                          Center(
-                                                              child: SimpleCircularLoader(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .outline)),
-                                                      errorWidget: (context,
-                                                              url, error) =>
-                                                          Icon(Icons.image,
-                                                              color: AppColors
-                                                                  .cLight,
-                                                              size: 26.h),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                    } else {
-                                      return const SizedBox(
-                                        height: 70,
-                                        width: 70,
-                                      );
-                                    }
-
-                                  default:
-                                    return const Center(
-                                      child: SimpleCircularLoader(),
-                                    );
-                                }
-                              },
-                            ),
-                            actions: [
-                              IconButton(
-                                onPressed: () {
-                                  Utilities.openNamedActivity(
-                                      context, Routes.createUpdateNote);
-                                },
-                                icon: Icon(
-                                  Icons.add,
-                                  color: Theme.of(context).colorScheme.outline,
-                                ),
-                              ),
-                              PopupMenuButton(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                elevation: 20,
-                                enabled: true,
-                                icon: const Icon(Icons.filter_list_rounded),
-                                tooltip: "Filter list",
-                                onSelected: (String value) {
-                                  _filterValue.value = value;
-                                },
-                                itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    value: "all",
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.list,
-                                          color:
-                                              Theme.of(context).iconTheme.color,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Text("Show All",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge),
-                                      ],
-                                    ),
-                                  ),
-                                  PopupMenuItem(
-                                    value: "fav",
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.star,
-                                          color:
-                                              Theme.of(context).iconTheme.color,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Text("Only Favourites",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 12),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        Utilities.openNamedActivity(
-                                            context, Routes.checklists);
-                                      },
-                                      icon: const Icon(Icons.checklist_rounded,
-                                          size: 20),
-                                      label: const Text('To-Do List'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.cBlueShade,
-                                        foregroundColor: AppColors.cWhite,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12, horizontal: 16),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: ElevatedButton.icon(
-                                      onPressed: () {
-                                        Utilities.openNamedActivity(
-                                            context, Routes.scratchpad);
-                                      },
-                                      icon: const Icon(Icons.edit_note_rounded,
-                                          size: 20),
-                                      label: const Text('Scratch Pad'),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.cBlueShade,
-                                        foregroundColor: AppColors.cWhite,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12, horizontal: 16),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          if (allNotes.isNotEmpty)
-                            NotesListView(
-                              notes: allNotes,
-                              onTap: (note) {
-                                Utilities.openNamedActivity(
-                                    context, Routes.createUpdateNote,
-                                    arguments: note);
-                              },
-                              onImageTap: (imageUrl) {
-                                log(imageUrl);
-                                Utilities.openNamedActivity(
-                                    context, Routes.notesImage,
-                                    arguments: ImageArgs(imageUrl: imageUrl));
-                              },
-                              onFileTap: (fileArg) {
-                                if (path.extension(fileArg.fileName) ==
-                                    ".pdf") {
-                                  Utilities.openNamedActivity(
-                                      context, Routes.pdfView,
-                                      arguments: fileArg);
-                                } else {
-                                  Utils.launchFile(fileArg.fileUrl);
-                                }
-                              },
-                              onLongPress: (note) {
-                                showBottomSheet(
-                                  context: context,
-                                  note: note,
-                                  onDeleteTap: () async {
-                                    Utilities.closeActivity(context);
-
-                                    final shouldDelete =
-                                        await showDeleteDialog(context);
-                                    log(shouldDelete.toString());
-                                    if (shouldDelete) {
-                                      if (note.imageUrl != "") {
-                                        _notesService
-                                            .deleteFile(note.imageUrl!);
-                                      }
-                                      if (note.fileUrl != "") {
-                                        _notesService.deleteFile(note.fileUrl!);
-                                      }
-                                      await _notesService.deleteNote(
-                                          documentId: note.documentId);
-                                    }
-                                  },
-                                  onShareTap: () async {
-                                    Utilities.closeActivity(context);
-                                    if (note.text.isEmpty) {
-                                      await showCannotShareEmptyNoteDialog(
-                                          context);
-                                    } else {
-                                      Share.share(note.text);
-                                    }
-                                  },
-                                  onDownloadTap: () {
-                                    Utilities.closeActivity(context);
-                                    _downloadNoteAsPdf(context, note);
-                                  },
-                                );
-                              },
-                            )
-                          else
-                            const SliverFillRemaining(
-                              hasScrollBody: false,
-                              child: Center(
-                                child:
-                                    NoDataWidget(title: "No notes available"),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                } else {
-                  return DefaultLoadingScreen(
-                    maxHeight: maxHeight,
-                    minHeight: minHeight,
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          Utilities.openNamedActivity(
-                              context, Routes.createUpdateNote);
-                        },
-                        icon: const Icon(Icons.add),
-                      ),
-                    ],
-                  );
+        return ValueListenableBuilder(
+          valueListenable: _refreshNotifier,
+          builder: (context, refreshValue, _) {
+            return StreamBuilder(
+              stream: _filterValue.value == "fav"
+                  ? _notesService.allFavouriteNotes(
+                      ownerUserId: userId!, favourite: true)
+                  : _notesService.allNotes(ownerUserId: userId!),
+              builder: (context, snapshot) {
+                if (userId == null) {
+                  Utilities.removeNamedStackActivity(context, Routes.login);
                 }
 
-              default:
-                return DefaultLoadingScreen(
-                  maxHeight: maxHeight,
-                  minHeight: minHeight,
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        Utilities.openNamedActivity(
-                            context, Routes.createUpdateNote);
-                      },
-                      icon: const Icon(Icons.add),
-                    ),
-                  ],
-                );
-            }
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    if (snapshot.hasData) {
+                      final allNotes = snapshot.data as Iterable<CloudNote>;
+
+                      return RefreshIndicator(
+                        onRefresh: _onRefresh,
+                        child: NotificationListener<ScrollEndNotification>(
+                          onNotification: (_) {
+                            _snapAppBar();
+                            return false;
+                          },
+                          child: CupertinoScrollbar(
+                            controller: _controller,
+                            child: CustomScrollView(
+                              controller: _controller,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              slivers: [
+                                SliverAppBar(
+                                  pinned: true,
+                                  stretch: true,
+                                  centerTitle: false,
+                                  shadowColor:
+                                      Theme.of(context).colorScheme.shadow,
+                                  iconTheme: Theme.of(context)
+                                      .appBarTheme
+                                      .iconTheme
+                                      ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outline),
+                                  flexibleSpace: Consumer<DarkThemeProvider>(
+                                    builder: (context, value, child) =>
+                                        SliverHeaderText(
+                                            maxHeight: maxHeight,
+                                            minHeight: minHeight,
+                                            notesLength: allNotes.isEmpty
+                                                ? 0
+                                                : allNotes.length,
+                                            onlyShowFavorite: _filterValue.value
+                                                        .toLowerCase() ==
+                                                    'fav'
+                                                ? true
+                                                : false,
+                                            imagePath: value.darkTheme
+                                                ? "assets/notesImage.png"
+                                                : "assets/notesImageLightNew.png"),
+                                  ),
+                                  expandedHeight: maxHeight -
+                                      MediaQuery.of(context).padding.top,
+                                  leading: StreamBuilder(
+                                    stream: _notesService.userData(
+                                        ownerUserId: userId!),
+                                    builder: (context, snapshot) {
+                                      switch (snapshot.connectionState) {
+                                        case ConnectionState.waiting:
+                                        case ConnectionState.active:
+                                          if (snapshot.hasData) {
+                                            final userData = snapshot.data
+                                                as Iterable<UserModel>;
+                                            return userData.isEmpty
+                                                ? const SizedBox.shrink()
+                                                : Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        Utilities
+                                                            .openNamedActivity(
+                                                                context,
+                                                                Routes
+                                                                    .settings);
+                                                      },
+                                                      child: Container(
+                                                        decoration: BoxDecoration(
+                                                            border: Border.all(
+                                                                color: Theme
+                                                                        .of(
+                                                                            context)
+                                                                    .primaryColor),
+                                                            color: AppColors
+                                                                .cDarkBlueAccent,
+                                                            shape: BoxShape
+                                                                .circle),
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      100),
+                                                          child:
+                                                              CachedNetworkImage(
+                                                            memCacheHeight: 200,
+                                                            imageUrl: userData
+                                                                    .first
+                                                                    .profileImage ??
+                                                                "",
+                                                            fit: BoxFit.cover,
+                                                            placeholder: (context, url) => Center(
+                                                                child: SimpleCircularLoader(
+                                                                    color: Theme.of(
+                                                                            context)
+                                                                        .colorScheme
+                                                                        .outline)),
+                                                            errorWidget: (context,
+                                                                    url,
+                                                                    error) =>
+                                                                Icon(
+                                                                    Icons.image,
+                                                                    color: AppColors
+                                                                        .cLight,
+                                                                    size: 26.h),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                          } else {
+                                            return const SizedBox(
+                                              height: 70,
+                                              width: 70,
+                                            );
+                                          }
+
+                                        default:
+                                          return const Center(
+                                            child: SimpleCircularLoader(),
+                                          );
+                                      }
+                                    },
+                                  ),
+                                  actions: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Utilities.openNamedActivity(
+                                            context, Routes.createUpdateNote);
+                                      },
+                                      icon: Icon(
+                                        Icons.add,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                      ),
+                                    ),
+                                    PopupMenuButton(
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      elevation: 20,
+                                      enabled: true,
+                                      icon:
+                                          const Icon(Icons.filter_list_rounded),
+                                      tooltip: "Filter list",
+                                      onSelected: (String value) {
+                                        _filterValue.value = value;
+                                      },
+                                      itemBuilder: (context) => [
+                                        PopupMenuItem(
+                                          value: "all",
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.list,
+                                                color: Theme.of(context)
+                                                    .iconTheme
+                                                    .color,
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Text("Show All",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge),
+                                            ],
+                                          ),
+                                        ),
+                                        PopupMenuItem(
+                                          value: "fav",
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.star,
+                                                color: Theme.of(context)
+                                                    .iconTheme
+                                                    .color,
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Text("Only Favourites",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 12),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            onPressed: () {
+                                              Utilities.openNamedActivity(
+                                                  context, Routes.checklists);
+                                            },
+                                            icon: const Icon(
+                                                Icons.checklist_rounded,
+                                                size: 20),
+                                            label: const Text('To-Do List'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  AppColors.cBlueShade,
+                                              foregroundColor: AppColors.cWhite,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 16),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            onPressed: () {
+                                              Utilities.openNamedActivity(
+                                                  context, Routes.scratchpad);
+                                            },
+                                            icon: const Icon(
+                                                Icons.edit_note_rounded,
+                                                size: 20),
+                                            label: const Text('Scratch Pad'),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  AppColors.cBlueShade,
+                                              foregroundColor: AppColors.cWhite,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12,
+                                                      horizontal: 16),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (allNotes.isNotEmpty)
+                                  NotesListView(
+                                    notes: allNotes,
+                                    onTap: (note) {
+                                      Utilities.openNamedActivity(
+                                          context, Routes.createUpdateNote,
+                                          arguments: note);
+                                    },
+                                    onImageTap: (imageUrl) {
+                                      log(imageUrl);
+                                      Utilities.openNamedActivity(
+                                          context, Routes.notesImage,
+                                          arguments:
+                                              ImageArgs(imageUrl: imageUrl));
+                                    },
+                                    onFileTap: (fileArg) {
+                                      if (path.extension(fileArg.fileName) ==
+                                          ".pdf") {
+                                        Utilities.openNamedActivity(
+                                            context, Routes.pdfView,
+                                            arguments: fileArg);
+                                      } else {
+                                        Utils.launchFile(fileArg.fileUrl);
+                                      }
+                                    },
+                                    onLongPress: (note) {
+                                      showBottomSheet(
+                                        context: context,
+                                        note: note,
+                                        onDeleteTap: () async {
+                                          Utilities.closeActivity(context);
+
+                                          final shouldDelete =
+                                              await showDeleteDialog(context);
+                                          log(shouldDelete.toString());
+                                          if (shouldDelete) {
+                                            if (note.imageUrl != "") {
+                                              _notesService
+                                                  .deleteFile(note.imageUrl!);
+                                            }
+                                            if (note.fileUrl != "") {
+                                              _notesService
+                                                  .deleteFile(note.fileUrl!);
+                                            }
+                                            await _notesService.deleteNote(
+                                                documentId: note.documentId);
+                                          }
+                                        },
+                                        onShareTap: () async {
+                                          Utilities.closeActivity(context);
+                                          if (note.text.isEmpty) {
+                                            await showCannotShareEmptyNoteDialog(
+                                                context);
+                                          } else {
+                                            Share.share(note.text);
+                                          }
+                                        },
+                                        onDownloadTap: () {
+                                          Utilities.closeActivity(context);
+                                          _downloadNoteAsPdf(context, note);
+                                        },
+                                      );
+                                    },
+                                  )
+                                else
+                                  const SliverFillRemaining(
+                                    hasScrollBody: false,
+                                    child: Center(
+                                      child: NoDataWidget(
+                                          title: "No notes available"),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return DefaultLoadingScreen(
+                        maxHeight: maxHeight,
+                        minHeight: minHeight,
+                        actions: [
+                          IconButton(
+                            onPressed: () {
+                              Utilities.openNamedActivity(
+                                  context, Routes.createUpdateNote);
+                            },
+                            icon: const Icon(Icons.add),
+                          ),
+                        ],
+                      );
+                    }
+
+                  default:
+                    return DefaultLoadingScreen(
+                      maxHeight: maxHeight,
+                      minHeight: minHeight,
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            Utilities.openNamedActivity(
+                                context, Routes.createUpdateNote);
+                          },
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    );
+                }
+              },
+            );
           },
         );
       },
